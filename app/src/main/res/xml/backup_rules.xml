@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Backup Android 11 e anteriores: preserva os dados do app, mas nunca a chave da API. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="nutrivision_prefs.xml" />
+</full-backup-content>
