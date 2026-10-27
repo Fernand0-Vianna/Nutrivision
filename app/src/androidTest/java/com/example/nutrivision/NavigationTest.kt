@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.nutrivision.data.RecordRepository
 import com.example.nutrivision.data.UserProfile
@@ -77,7 +76,7 @@ class NavigationTest {
         compose.onNodeWithText("EDITAR PERFIL E RESTRIÇÕES").performClick()
         compose.onNodeWithText("ATUALIZAR PERFIL").assertIsDisplayed()
         compose.onNodeWithText("DADOS PESSOAIS").assertIsDisplayed()
-        Espresso.pressBack()
+        compose.activityRule.scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
         compose.onNodeWithText("METAS DIÁRIAS").assertIsDisplayed()
     }
 
