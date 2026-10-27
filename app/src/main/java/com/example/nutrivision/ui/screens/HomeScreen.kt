@@ -96,8 +96,6 @@ fun HomeScreen(
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    NbFabScan(onClick = onScan)
-                    Spacer(modifier = Modifier.width(10.dp))
                     Box(
                         modifier = Modifier
                             .size(44.dp)
@@ -335,6 +333,10 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(120.dp))
         }
 
+        NbFabScan(
+            onClick = onScan,
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 92.dp)
+        )
         BottomTabBar(
             selected = 0,
             onNavigate = onNavigate,
