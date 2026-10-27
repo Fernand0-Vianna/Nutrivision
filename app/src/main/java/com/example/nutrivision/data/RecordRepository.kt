@@ -42,11 +42,13 @@ class RecordRepository(private val context: Context) {
     private val waterFile: File by lazy { File(relatorioDir, "agua.json") }
     private val weightsFile: File by lazy { File(relatorioDir, "peso.json") }
     private val userProfileFile: File by lazy { File(relatorioDir, "user_profile.json") }
+    private val pinnedFile: File by lazy { File(relatorioDir, "pinned.json") }
     private val quarantinedFiles = mutableSetOf<String>()
 
     init {
         if (!relatorioDir.exists()) relatorioDir.mkdirs()
         if (!recordsFile.exists()) writeAtomic(recordsFile, "[]")
+        if (!pinnedFile.exists()) writeAtomic(pinnedFile, "[]")
         if (!scansDir.exists()) scansDir.mkdirs()
     }
 
@@ -164,6 +166,69 @@ class RecordRepository(private val context: Context) {
     /** Quantidade de dias distintos que possuem pelo menos um registro. */
     fun daysWithRecords(records: List<FoodRecord>): Int =
         records.map { dayKey(it.timestamp) }.distinct().size
+
+    // ---------- Pratos fixados ----------
+
+    fun loadPinnedMeals(): List<PinnedMeal> {
+        return try {
+            if (!pinnedFile.exists()) return emptyList()
+            val type = object : TypeToken<List<PinnedMeal>>() {}.type
+            gson.fromJson<List<PinnedMeal>>(pinnedFile.readText(), type) ?: emptyList()
+        } catch (e: Exception) {
+            quarantine(pinnedFile)
+            emptyList()
+        }
+    }
+
+    fun isPinned(name: String, calories: Double): Boolean =
+        loadPinnedMeals().any { it.matches(name, calories) }
+
+    /**
+     * Fixa/desafixa um prato. Devolve `true` quando o prato passou a estar
+     * fixado e `false` quando foi removido.
+     */
+    @Synchronized
+    fun togglePinned(
+        name: String,
+        calories: Double,
+        protein: Double,
+        carbs: Double,
+        fat: Double
+    ): Boolean {
+        val current = loadPinnedMeals().toMutableList()
+        val existing = current.firstOrNull { it.matches(name, calories) }
+        return if (existing != null) {
+            current.remove(existing)
+            writeAtomic(pinnedFile, gson.toJson(current))
+            false
+        } else {
+            current.add(
+                0,
+                PinnedMeal(
+                    name = name.trim().ifBlank { "Refeição" },
+                    calories = calories,
+                    protein = protein,
+                    carbs = carbs,
+                    fat = fat
+                )
+            )
+            writeAtomic(pinnedFile, gson.toJson(current))
+            true
+        }
+    }
+
+    fun deletePinnedMeal(id: String) {
+        val current = loadPinnedMeals().filterNot { it.id == id }
+        writeAtomic(pinnedFile, gson.toJson(current))
+    }
+
+    /** Adiciona um prato fixado ao diário de hoje e devolve o registro criado. */
+    fun addPinnedToToday(id: String): FoodRecord? {
+        val meal = loadPinnedMeals().firstOrNull { it.id == id } ?: return null
+        val record = meal.toRecord()
+        saveRecord(record)
+        return record
+    }
 
     // ---------- Médias ----------
 

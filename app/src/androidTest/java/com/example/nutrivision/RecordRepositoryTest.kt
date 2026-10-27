@@ -7,6 +7,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.example.nutrivision.data.FoodRecord
 import com.example.nutrivision.data.RecordRepository
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -87,6 +89,52 @@ class RecordRepositoryTest {
 
         repository.resetWater()
         assertEquals(0.0, repository.loadWaterMl(), 0.001)
+    }
+
+    @Test
+    fun pinnedMealCanBeToggledAndAddedToToday() {
+        val repository = RecordRepository(context)
+        val record = FoodRecord(
+            mealName = "Omelete de queijo",
+            calories = 320.0,
+            protein = 20.0,
+            carbs = 4.0,
+            fat = 24.0,
+            source = "manual"
+        )
+
+        assertFalse(repository.isPinned(record.mealName, record.calories))
+        assertTrue(
+            repository.togglePinned(
+                record.mealName,
+                record.calories,
+                record.protein,
+                record.carbs,
+                record.fat
+            )
+        )
+        assertTrue(repository.isPinned(record.mealName, record.calories))
+        assertEquals(1, repository.loadPinnedMeals().size)
+
+        // A persistência sobrevive a uma nova instância do repositório.
+        val reloaded = RecordRepository(context)
+        assertEquals(1, reloaded.loadPinnedMeals().size)
+
+        val added = repository.addPinnedToToday(reloaded.loadPinnedMeals().first().id)
+        assertNotNull(added)
+        assertEquals(1, repository.recordsOfToday().size)
+        assertEquals("fixado", repository.recordsOfToday().first().source)
+
+        assertFalse(
+            repository.togglePinned(
+                record.mealName,
+                record.calories,
+                record.protein,
+                record.carbs,
+                record.fat
+            )
+        )
+        assertTrue(repository.loadPinnedMeals().isEmpty())
     }
 
     @Test

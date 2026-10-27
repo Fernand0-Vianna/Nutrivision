@@ -14,7 +14,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,7 +60,7 @@ fun ProfileScreen(
                 Box(
                     modifier = Modifier
                         .size(64.dp)
-                        .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+                        .nbHardShadow(offsetX = 5.dp, offsetY = 4.dp)
                         .background(Lime, RoundedCornerShape(4.dp))
                         .border(3.dp, Ink, RoundedCornerShape(4.dp)),
                     contentAlignment = Alignment.Center

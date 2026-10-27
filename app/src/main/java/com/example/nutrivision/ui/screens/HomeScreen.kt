@@ -3,6 +3,7 @@ package com.example.nutrivision.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -21,13 +21,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.nutrivision.data.FoodRecord
+import com.example.nutrivision.data.PinnedMeal
 import com.example.nutrivision.data.RecordRepository
 import com.example.nutrivision.ui.components.BottomTabBar
 import com.example.nutrivision.ui.components.NbCard
 import com.example.nutrivision.ui.components.NbChip
 import com.example.nutrivision.ui.components.NbFabScan
+import com.example.nutrivision.ui.components.NbMiniIconButton
 import com.example.nutrivision.ui.components.NbProgressBar
+import com.example.nutrivision.ui.components.nbHardShadow
 import com.example.nutrivision.ui.theme.*
+import kotlinx.coroutines.delay
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -44,6 +48,14 @@ fun HomeScreen(
     val stats = remember(refreshKey, records) { repository.stats(records) }
     val goals = remember(refreshKey) { repository.loadGoals() }
     var water by remember(refreshKey) { mutableStateOf(repository.loadWaterMl()) }
+    val pinnedMeals = remember(refreshKey) { repository.loadPinnedMeals() }
+    var addedPinnedId by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(addedPinnedId) {
+        if (addedPinnedId != null) {
+            delay(1600)
+            addedPinnedId = null
+        }
+    }
     val profile = remember(refreshKey) { repository.loadUserProfile() }
     val firstName = profile.name.trim().split(" ").firstOrNull()?.takeIf { it.isNotBlank() }?.uppercase() ?: "USUÁRIO"
     val initials = profile.name.trim().split(Regex("\\s+")).take(2)
@@ -86,7 +98,7 @@ fun HomeScreen(
                 Box(
                     modifier = Modifier
                         .size(44.dp)
-                        .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+                        .nbHardShadow(offsetX = 4.dp, offsetY = 4.dp)
                         .background(Lime, RoundedCornerShape(4.dp))
                         .border(2.dp, Ink, RoundedCornerShape(4.dp))
                         .clickable { onNavigate(Screen.Profile) },
@@ -188,6 +200,68 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
+                    text = "PRATOS FIXADOS",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFamily = ArchivoFamily,
+                    color = Ink,
+                    letterSpacing = (-0.3).sp
+                )
+                if (pinnedMeals.isNotEmpty()) {
+                    Text(
+                        text = "${pinnedMeals.size} ${if (pinnedMeals.size == 1) "prato" else "pratos"}",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Muted
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            if (pinnedMeals.isEmpty()) {
+                NbCard(modifier = Modifier.fillMaxWidth()) {
+                    Text(text = "FIXE SEUS PRATOS FAVORITOS", fontWeight = FontWeight.ExtraBold, color = Ink)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "No resultado do scan, toque em FIXAR PRATO. Ele aparece aqui para adicionar ao dia em um toque.",
+                        fontWeight = FontWeight.Medium,
+                        color = Secondary,
+                        fontSize = 12.sp
+                    )
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    pinnedMeals.forEach { meal ->
+                        PinnedMealCard(
+                            meal = meal,
+                            added = addedPinnedId == meal.id,
+                            onAdd = {
+                                repository.addPinnedToToday(meal.id)
+                                addedPinnedId = meal.id
+                                refreshKey++
+                            },
+                            onUnpin = {
+                                repository.deletePinnedMeal(meal.id)
+                                refreshKey++
+                            }
+                        )
+                    }
+                    // Espaço para a sombra do último card não ser cortada pelo scroll.
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
                     text = "REFEIÇÕES DE HOJE",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.ExtraBold,
@@ -252,6 +326,77 @@ fun HomeScreen(
 }
 
 @Composable
+private fun PinnedMealCard(
+    meal: PinnedMeal,
+    added: Boolean,
+    onAdd: () -> Unit,
+    onUnpin: () -> Unit
+) {
+    NbCard(modifier = Modifier.width(190.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(PinYellow, RoundedCornerShape(4.dp))
+                    .border(1.dp, Ink, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 5.dp, vertical = 2.dp)
+            ) {
+                Text(text = "📌", fontSize = 12.sp)
+            }
+            NbMiniIconButton(label = "×", onClick = onUnpin)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = meal.name.uppercase(),
+            fontWeight = FontWeight.ExtraBold,
+            fontFamily = ArchivoFamily,
+            color = Ink,
+            fontSize = 14.sp,
+            maxLines = 2,
+            minLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "${meal.calories.toInt()} kcal",
+            fontWeight = FontWeight.Bold,
+            fontFamily = SpaceMonoFamily,
+            color = PrimaryInk,
+            fontSize = 18.sp
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = "P:${meal.protein.toInt()}g C:${meal.carbs.toInt()}g G:${meal.fat.toInt()}g",
+            fontWeight = FontWeight.Bold,
+            color = Secondary,
+            fontSize = 10.sp
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(34.dp)
+                .nbHardShadow(offsetX = 2.dp, offsetY = 2.dp)
+                .background(if (added) Lime else Card, RoundedCornerShape(4.dp))
+                .border(2.dp, Ink, RoundedCornerShape(4.dp))
+                .clickable(onClick = onAdd),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = if (added) "ADICIONADO ✓" else "+ ADICIONAR",
+                fontWeight = FontWeight.ExtraBold,
+                color = Ink,
+                fontSize = 10.sp,
+                letterSpacing = 0.4.sp
+            )
+        }
+    }
+}
+
+@Composable
 private fun MacroInline(label: String, value: Double, goal: Double, color: Color) {
     Text(
         text = "$label ${value.toInt()}/${goal.toInt()}g",
@@ -263,11 +408,12 @@ private fun MacroInline(label: String, value: Double, goal: Double, color: Color
 
 @Composable
 private fun MealCard(record: FoodRecord) {
+    val imagePath = record.imagePath
     NbCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (!record.imagePath.isNullOrBlank() && File(record.imagePath!!).exists()) {
+            if (!imagePath.isNullOrBlank() && File(imagePath).exists()) {
                 AsyncImage(
-                    model = File(record.imagePath!!),
+                    model = File(imagePath),
                     contentDescription = "Foto de ${record.mealName}",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

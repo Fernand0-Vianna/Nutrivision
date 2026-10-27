@@ -13,7 +13,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +22,7 @@ import com.example.nutrivision.ui.components.NbButtonPrimary
 import com.example.nutrivision.ui.components.NbCard
 import com.example.nutrivision.ui.components.NbChip
 import com.example.nutrivision.ui.components.NbSectionHeader
+import com.example.nutrivision.ui.components.nbHardShadow
 import com.example.nutrivision.ui.theme.*
 import java.util.Locale
 
@@ -166,7 +166,10 @@ fun OnboardingScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .shadow(if (activityLevel == key) 2.dp else 0.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+                                    .nbHardShadow(
+                                        offsetX = if (activityLevel == key) 3.dp else 0.dp,
+                                        offsetY = if (activityLevel == key) 2.dp else 0.dp
+                                    )
                                     .background(if (activityLevel == key) Mint else Card, RoundedCornerShape(4.dp))
                                     .border(2.dp, Ink, RoundedCornerShape(4.dp))
                                     .clickable { activityLevel = key }
@@ -208,7 +211,10 @@ fun OnboardingScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .shadow(if (conditions.contains(key)) 2.dp else 0.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+                                    .nbHardShadow(
+                                        offsetX = if (conditions.contains(key)) 3.dp else 0.dp,
+                                        offsetY = if (conditions.contains(key)) 2.dp else 0.dp
+                                    )
                                     .background(if (conditions.contains(key)) Soft else Card, RoundedCornerShape(4.dp))
                                     .border(2.dp, Ink, RoundedCornerShape(4.dp))
                                     .clickable {

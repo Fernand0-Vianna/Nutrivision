@@ -42,12 +42,14 @@ fun ResultScreen(
     var proteinText by remember { mutableStateOf(record.protein.toDecimalText()) }
     var carbsText by remember { mutableStateOf(record.carbs.toDecimalText()) }
     var fatText by remember { mutableStateOf(record.fat.toDecimalText()) }
+    var pinnedMeals by remember { mutableStateOf(repository.loadPinnedMeals()) }
 
     val isManual = record.source == "manual"
     val kcal = kcalText.toDoubleValue()
     val protein = proteinText.toDoubleValue()
     val carbs = carbsText.toDoubleValue()
     val fat = fatText.toDoubleValue()
+    val isPinned = pinnedMeals.any { it.matches(mealName, kcal) }
     val avg = listOf(kcal, protein, carbs, fat).average()
     val profile = remember { repository.loadUserProfile() }
     val alerts = remember(profile) { profile.healthAlerts() }
@@ -113,7 +115,14 @@ fun ResultScreen(
                 }
                 Box(
                     modifier = Modifier
-                        .background(if (record.source == "gemini") Mint else Elevated, RoundedCornerShape(4.dp))
+                        .background(
+                            when (record.source) {
+                                "gemini" -> Mint
+                                "fixado" -> PinYellow
+                                else -> Elevated
+                            },
+                            RoundedCornerShape(4.dp)
+                        )
                         .border(1.dp, Ink, RoundedCornerShape(4.dp))
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
@@ -121,6 +130,7 @@ fun ResultScreen(
                         text = when (record.source) {
                             "gemini" -> "GEMINI"
                             "manual" -> "MANUAL"
+                            "fixado" -> "FIXADO"
                             else -> "LOCAL"
                         },
                         fontSize = 10.sp,
@@ -260,6 +270,28 @@ fun ResultScreen(
                 color = WarningInk
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        NbButtonSecondary(
+            text = if (isPinned) "Prato fixado ✓" else "Fixar prato 📌",
+            enabled = canSave,
+            containerColor = if (isPinned) Lime else Bone,
+            onClick = {
+                repository.togglePinned(mealName, kcal, protein, carbs, fat)
+                pinnedMeals = repository.loadPinnedMeals()
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = if (isPinned) {
+                "Este prato aparece na sua tela inicial e pode ser desfixado por lá."
+            } else {
+                "Fixe para adicionar este prato ao diário em um toque, sem escanear de novo."
+            },
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium,
+            color = Muted
+        )
         Spacer(modifier = Modifier.height(10.dp))
         NbButtonSecondary(
             text = "Analisar outra foto",

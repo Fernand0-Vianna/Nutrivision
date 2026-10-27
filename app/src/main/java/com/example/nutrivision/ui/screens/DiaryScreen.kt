@@ -40,6 +40,7 @@ fun DiaryScreen(
     var filter by remember { mutableStateOf("TODOS") }
     var range by remember { mutableStateOf("TUDO") }
     var pendingDelete by remember { mutableStateOf<FoodRecord?>(null) }
+    val pinnedMeals = remember(refreshKey) { repository.loadPinnedMeals() }
 
     val inRange = remember(range, records) {
         when (range) {
@@ -156,6 +157,17 @@ fun DiaryScreen(
                         items(items, key = { it.id }) { r ->
                             DiaryRow(
                                 record = r,
+                                isPinned = pinnedMeals.any { it.matches(r.mealName, r.calories) },
+                                onPin = {
+                                    repository.togglePinned(
+                                        r.mealName,
+                                        r.calories,
+                                        r.protein,
+                                        r.carbs,
+                                        r.fat
+                                    )
+                                    refreshKey++
+                                },
                                 onDelete = { pendingDelete = r }
                             )
                         }
@@ -204,7 +216,12 @@ fun DiaryScreen(
 }
 
 @Composable
-private fun DiaryRow(record: FoodRecord, onDelete: () -> Unit) {
+private fun DiaryRow(
+    record: FoodRecord,
+    isPinned: Boolean,
+    onPin: () -> Unit,
+    onDelete: () -> Unit
+) {
     NbCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -254,6 +271,7 @@ private fun DiaryRow(record: FoodRecord, onDelete: () -> Unit) {
                     text = "P:${record.protein.toInt()}g · C:${record.carbs.toInt()}g · G:${record.fat.toInt()}g · ${when (record.source) {
                         "gemini" -> "IA"
                         "manual" -> "MANUAL"
+                        "fixado" -> "FIXADO"
                         else -> "REGISTRO"
                     }}",
                     fontWeight = FontWeight.Bold,
@@ -263,8 +281,17 @@ private fun DiaryRow(record: FoodRecord, onDelete: () -> Unit) {
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            NbIconButton(label = "×", onClick = onDelete)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+        ) {
+            NbIconButton(
+                label = if (isPinned) "✓" else "📌",
+                onClick = onPin,
+                containerColor = if (isPinned) Lime else Card,
+                size = 40.dp
+            )
+            NbIconButton(label = "×", onClick = onDelete, size = 40.dp)
         }
     }
 }

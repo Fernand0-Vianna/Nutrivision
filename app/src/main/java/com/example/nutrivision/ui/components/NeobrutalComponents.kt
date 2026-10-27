@@ -12,13 +12,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nutrivision.ui.theme.*
+
+/**
+ * Sombra "dura" no estilo Tuckii: um retângulo preto deslocado para a direita
+ * e para baixo, sem desfoque. O deslocamento horizontal é maior para dar a
+ * sensação de uma borda saliente mais grossa no lado direito.
+ */
+fun Modifier.nbHardShadow(
+    offsetX: Dp = 6.dp,
+    offsetY: Dp = 4.dp,
+    corner: Dp = 4.dp,
+    color: Color = Ink
+): Modifier = drawBehind {
+    val radius = corner.toPx()
+    drawRoundRect(
+        color = color,
+        topLeft = Offset(offsetX.toPx(), offsetY.toPx()),
+        size = Size(size.width, size.height),
+        cornerRadius = CornerRadius(radius, radius)
+    )
+}
 
 @Composable
 fun NbButtonPrimary(
@@ -31,10 +55,11 @@ fun NbButtonPrimary(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
-            .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+            .nbHardShadow()
             .height(56.dp),
         shape = RoundedCornerShape(4.dp),
         border = BorderStroke(2.dp, Ink),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Primary,
             contentColor = PrimaryInk,
@@ -55,21 +80,23 @@ fun NbButtonPrimary(
 fun NbButtonSecondary(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = Bone
 ) {
     Box(
         modifier = modifier
+            .nbHardShadow()
             .height(52.dp)
-            .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
-            .background(Bone, RoundedCornerShape(4.dp))
-            .border(BorderStroke(2.dp, Ink), RoundedCornerShape(4.dp))
-            .clickable(onClick = onClick),
+            .background(if (enabled) containerColor else Elevated, RoundedCornerShape(4.dp))
+            .border(BorderStroke(2.dp, if (enabled) Ink else Muted), RoundedCornerShape(4.dp))
+            .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text.uppercase(),
             fontWeight = FontWeight.ExtraBold,
-            color = Ink,
+            color = if (enabled) Ink else Muted,
             fontSize = 16.sp,
             letterSpacing = 0.4.sp
         )
@@ -83,7 +110,7 @@ fun NbCard(
 ) {
     Column(
         modifier = modifier
-            .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+            .nbHardShadow()
             .background(Card, RoundedCornerShape(4.dp))
             .border(BorderStroke(2.dp, Ink), RoundedCornerShape(4.dp))
             .padding(16.dp),
@@ -99,7 +126,7 @@ fun NbFabScan(
     Box(
         modifier = modifier
             .size(56.dp)
-            .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+            .nbHardShadow(offsetX = 5.dp, offsetY = 4.dp)
             .background(Lime, RoundedCornerShape(4.dp))
             .border(BorderStroke(3.dp, Ink), RoundedCornerShape(4.dp))
             .clickable(onClick = onClick),
@@ -188,7 +215,10 @@ fun NbChip(
 ) {
     Box(
         modifier = modifier
-            .shadow(if (selected) 4.dp else 0.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
+            .nbHardShadow(
+                offsetX = if (selected) 3.dp else 0.dp,
+                offsetY = if (selected) 2.dp else 0.dp
+            )
             .background(if (selected) Lime else Card, RoundedCornerShape(4.dp))
             .border(2.dp, Ink, RoundedCornerShape(4.dp))
             .clickable(onClick = onClick)
@@ -264,17 +294,39 @@ fun NbStatCard(
 fun NbIconButton(
     label: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    containerColor: Color = Card,
+    size: Dp = 44.dp
 ) {
     Box(
         modifier = modifier
-            .size(44.dp)
-            .shadow(4.dp, RoundedCornerShape(4.dp), ambientColor = Ink, spotColor = Ink)
-            .background(Card, RoundedCornerShape(4.dp))
+            .size(size)
+            .nbHardShadow(offsetX = 4.dp, offsetY = 3.dp)
+            .background(containerColor, RoundedCornerShape(4.dp))
             .border(2.dp, Ink, RoundedCornerShape(4.dp))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(text = label, fontWeight = FontWeight.ExtraBold, color = Ink, fontSize = 16.sp)
+    }
+}
+
+@Composable
+fun NbMiniIconButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = Card
+) {
+    Box(
+        modifier = modifier
+            .size(28.dp)
+            .nbHardShadow(offsetX = 2.dp, offsetY = 2.dp)
+            .background(containerColor, RoundedCornerShape(4.dp))
+            .border(1.5.dp, Ink, RoundedCornerShape(4.dp))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = label, fontWeight = FontWeight.ExtraBold, color = Ink, fontSize = 13.sp)
     }
 }
