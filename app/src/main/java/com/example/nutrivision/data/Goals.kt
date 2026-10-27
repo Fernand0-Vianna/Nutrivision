@@ -21,9 +21,9 @@ data class DailyStats(
     val protein: Double = 0.0,
     val carbs: Double = 0.0,
     val fat: Double = 0.0,
-    /** Média aritmética (calorias, proteína, carbo, gordura) por registro. */
+    /** Média de kcal por registro. */
     val averagePerRecord: Double = 0.0,
-    /** Média global das médias por registro do histórico. */
+    /** Média global das médias de kcal por registro do histórico. */
     val averageOfAverages: Double = 0.0,
     val bestRecord: FoodRecord? = null,
     val mealBreakdown: Map<String, Int> = emptyMap()

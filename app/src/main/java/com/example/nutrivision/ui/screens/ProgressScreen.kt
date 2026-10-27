@@ -169,7 +169,7 @@ fun ProgressScreen(
                     Text(text = "Sem dados ainda.", fontWeight = FontWeight.Medium, color = Muted)
                 } else {
                     daily.take(10).forEach { (day, list) ->
-                        val dayAvg = if (list.isEmpty()) 0.0 else list.map { it.average() }.average()
+                        val dayAvg = if (list.isEmpty()) 0.0 else list.map { it.kcalPerRecord() }.average()
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,

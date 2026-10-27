@@ -4,6 +4,8 @@ data class FoodRecord(
     val id: String = java.util.UUID.randomUUID().toString(),
     val timestamp: Long = System.currentTimeMillis(),
     val mealName: String = "",
+    /** Categoria da refeição: "Café", "Almoço", "Jantar", "Lanche", "Outro". */
+    val mealType: String = "",
     val imagePath: String? = null,
     val calories: Double = 0.0,
     val protein: Double = 0.0,
@@ -15,11 +17,8 @@ data class FoodRecord(
      */
     val source: String = "manual"
 ) {
-    fun average(): Double {
-        val values = listOf(calories, protein, carbs, fat)
-        val sum = values.sum()
-        return if (values.isNotEmpty()) sum / values.size else 0.0
-    }
+    /** Calorias por registro — métrica nutricional válida. */
+    fun kcalPerRecord(): Double = calories
 }
 
 /**
@@ -34,6 +33,7 @@ data class PinnedMeal(
     val protein: Double = 0.0,
     val carbs: Double = 0.0,
     val fat: Double = 0.0,
+    val mealType: String = "",
     val imagePath: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 ) {
@@ -45,6 +45,7 @@ data class PinnedMeal(
         FoodRecord(
             timestamp = timestamp,
             mealName = name.ifBlank { "Refeição" },
+            mealType = mealType,
             imagePath = imagePath,
             calories = calories,
             protein = protein,

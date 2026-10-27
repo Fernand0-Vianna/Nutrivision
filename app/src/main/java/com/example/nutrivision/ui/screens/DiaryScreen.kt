@@ -52,7 +52,7 @@ fun DiaryScreen(
     }
     val filtered = remember(filter, inRange) {
         if (filter == "TODOS") inRange
-        else inRange.filter { it.mealName.equals(filter, ignoreCase = true) }
+        else inRange.filter { it.mealType.equals(filter, ignoreCase = true) || (it.mealType.isBlank() && it.mealName.equals(filter, ignoreCase = true)) }
     }
     val grouped = remember(filtered) { repository.recordsByDay(filtered) }
 
@@ -76,8 +76,8 @@ fun DiaryScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 NbStatCard("Registros", filtered.size.toString(), "", Ink, Modifier.weight(1f))
                 NbStatCard(
-                    "Média/registro",
-                    String.format(Locale.ROOT, "%.0f", if (filtered.isEmpty()) 0.0 else filtered.map { it.average() }.average()),
+                    "Média kcal",
+                    String.format(Locale.ROOT, "%.0f", if (filtered.isEmpty()) 0.0 else filtered.map { it.kcalPerRecord() }.average()),
                     valueColor = PrimaryInk,
                     modifier = Modifier.weight(1f)
                 )
@@ -165,7 +165,8 @@ fun DiaryScreen(
                                         r.protein,
                                         r.carbs,
                                         r.fat,
-                                        r.imagePath
+                                        r.mealType,
+                                        r.imagePath ?: ""
                                     )
                                     refreshKey++
                                 },
@@ -262,7 +263,7 @@ private fun DiaryRow(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${record.calories.toInt()} kcal · média ${String.format(Locale.ROOT, "%.1f", record.average())}",
+                    text = "${record.calories.toInt()} kcal",
                     fontWeight = FontWeight.Bold,
                     color = Secondary,
                     fontSize = 12.sp

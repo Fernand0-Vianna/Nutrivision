@@ -9,9 +9,9 @@ import org.junit.Test
 class DomainRulesTest {
 
     @Test
-    fun averageIsArithmeticMeanOfCaloriesAndMacros() {
+    fun kcalPerRecordReturnsCalories() {
         val record = FoodRecord(calories = 400.0, protein = 20.0, carbs = 40.0, fat = 20.0)
-        assertEquals(120.0, record.average(), 0.001)
+        assertEquals(400.0, record.kcalPerRecord(), 0.001)
     }
 
     @Test

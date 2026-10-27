@@ -104,7 +104,7 @@ class RecordRepository(private val context: Context) {
         val records = loadRecords().toMutableList()
         records.add(record)
         writeAtomic(recordsFile, gson.toJson(records))
-        val avg = record.average()
+        val avg = record.kcalPerRecord()
         saveMedia(record.id, avg)
         return avg
     }
@@ -204,6 +204,7 @@ class RecordRepository(private val context: Context) {
         protein: Double,
         carbs: Double,
         fat: Double,
+        mealType: String = "",
         imagePath: String? = null
     ): Boolean {
         val current = loadPinnedMeals().toMutableList()
@@ -222,6 +223,7 @@ class RecordRepository(private val context: Context) {
                     protein = protein,
                     carbs = carbs,
                     fat = fat,
+                    mealType = mealType,
                     imagePath = imagePath
                 )
             )
@@ -265,13 +267,13 @@ class RecordRepository(private val context: Context) {
     }
 
     /** Média de um único registro (recalculada a partir dos macros + calorias). */
-    fun mediaDoRegistro(record: FoodRecord): Double = record.average()
+    fun mediaDoRegistro(record: FoodRecord): Double = record.kcalPerRecord()
 
     /** Média das médias por registro do histórico inteiro. */
     fun mediaGeral(): Double {
         val records = loadRecords()
         if (records.isEmpty()) return 0.0
-        return records.map { it.average() }.average()
+        return records.map { it.kcalPerRecord() }.average()
     }
 
     // ---------- Agregados ----------
@@ -282,17 +284,17 @@ class RecordRepository(private val context: Context) {
         val protein = records.sumOf { it.protein }
         val carbs = records.sumOf { it.carbs }
         val fat = records.sumOf { it.fat }
-        val averages = records.map { it.average() }
+        val kcalAverages = records.map { it.kcalPerRecord() }
         return DailyStats(
             recordCount = records.size,
             calories = calories,
             protein = protein,
             carbs = carbs,
             fat = fat,
-            averagePerRecord = averages.average(),
-            averageOfAverages = averages.average(),
+            averagePerRecord = kcalAverages.average(),
+            averageOfAverages = kcalAverages.average(),
             bestRecord = records.maxByOrNull { it.calories },
-            mealBreakdown = records.groupingBy { it.mealName.ifEmpty { "Refeição" } }.eachCount()
+            mealBreakdown = records.groupingBy { it.mealType.ifBlank { it.mealName }.ifEmpty { "Refeição" } }.eachCount()
         )
     }
 
@@ -493,7 +495,7 @@ class RecordRepository(private val context: Context) {
                         num(r.protein, 0),
                         num(r.carbs, 0),
                         num(r.fat, 0),
-                        num(r.average()),
+                        num(r.kcalPerRecord()),
                         esc(r.source),
                         esc(r.imagePath ?: "")
                     ).joinToString(";") + "\r\n"

@@ -38,6 +38,7 @@ fun ResultScreen(
     onSaved: () -> Unit
 ) {
     var mealName by remember { mutableStateOf(record.mealName.ifEmpty { "Refeição" }) }
+    var mealType by remember { mutableStateOf(record.mealType) }
     var kcalText by remember { mutableStateOf(record.calories.toDecimalText()) }
     var proteinText by remember { mutableStateOf(record.protein.toDecimalText()) }
     var carbsText by remember { mutableStateOf(record.carbs.toDecimalText()) }
@@ -50,7 +51,6 @@ fun ResultScreen(
     val carbs = carbsText.toDoubleValue()
     val fat = fatText.toDoubleValue()
     val isPinned = pinnedMeals.any { it.matches(mealName, kcal) }
-    val avg = listOf(kcal, protein, carbs, fat).average()
     val profile = remember { repository.loadUserProfile() }
     val alerts = remember(profile) { profile.healthAlerts() }
     val canSave = mealName.isNotBlank() && kcal > 0.0
@@ -150,25 +150,6 @@ fun ResultScreen(
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        NbCard(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "MÉDIA POR REGISTRO", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Secondary, letterSpacing = 1.1.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = String.format(Locale.ROOT, "%.1f", avg),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = SpaceMonoFamily,
-                color = PrimaryInk
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Média aritmética de calorias, proteína, carboidrato e gordura",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium,
-                color = Muted
-            )
-        }
-
         if (alerts.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
             NbCard(modifier = Modifier.fillMaxWidth()) {
@@ -205,41 +186,41 @@ fun ResultScreen(
             meals.forEach { m ->
                 NbChip(
                     text = m,
-                    selected = mealName == m,
-                    onClick = { mealName = m }
+                    selected = mealType == m,
+                    onClick = { mealType = m }
                 )
             }
         }
 
-        if (isManual) {
-            Spacer(modifier = Modifier.height(16.dp))
-            NbSectionHeader(title = "Valores informados por você")
-            Spacer(modifier = Modifier.height(12.dp))
-            NbCard(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(16.dp))
+        NbSectionHeader(title = "Valores da refeição")
+        Spacer(modifier = Modifier.height(12.dp))
+        NbCard(modifier = Modifier.fillMaxWidth()) {
+            if (!isManual) {
                 Text(
-                    text = "Estes valores não são uma estimativa da IA. Preencha com base no rótulo, na receita ou na porção que você conhece.",
+                    text = "Valores estimados pela IA. Ajuste se necessário.",
                     fontWeight = FontWeight.Medium,
                     color = Secondary,
                     fontSize = 12.sp
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = mealName,
-                    onValueChange = { mealName = it },
-                    label = { Text("Nome da refeição", fontWeight = FontWeight.Bold, fontSize = 13.sp) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    shape = RoundedCornerShape(4.dp),
-                    colors = resultFieldColors()
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                ManualNumberField("Calorias (kcal)", kcalText) { kcalText = it }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ManualNumberField("Proteína (g)", proteinText, Modifier.weight(1f)) { proteinText = it }
-                    ManualNumberField("Carbo (g)", carbsText, Modifier.weight(1f)) { carbsText = it }
-                    ManualNumberField("Gordura (g)", fatText, Modifier.weight(1f)) { fatText = it }
-                }
+            }
+            OutlinedTextField(
+                value = mealName,
+                onValueChange = { mealName = it },
+                label = { Text("Nome da refeição", fontWeight = FontWeight.Bold, fontSize = 13.sp) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(4.dp),
+                colors = resultFieldColors()
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            ManualNumberField("Calorias (kcal)", kcalText) { kcalText = it }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                ManualNumberField("Proteína (g)", proteinText, Modifier.weight(1f)) { proteinText = it }
+                ManualNumberField("Carbo (g)", carbsText, Modifier.weight(1f)) { carbsText = it }
+                ManualNumberField("Gordura (g)", fatText, Modifier.weight(1f)) { fatText = it }
             }
         }
 
@@ -251,6 +232,7 @@ fun ResultScreen(
                 repository.saveRecord(
                     record.copy(
                         mealName = mealName.ifBlank { "Refeição" },
+                        mealType = mealType,
                         calories = kcal,
                         protein = protein,
                         carbs = carbs,
@@ -276,7 +258,7 @@ fun ResultScreen(
             enabled = canSave,
             containerColor = if (isPinned) Lime else Bone,
             onClick = {
-                repository.togglePinned(mealName, kcal, protein, carbs, fat, record.imagePath)
+                repository.togglePinned(mealName, kcal, protein, carbs, fat, mealType, record.imagePath)
                 pinnedMeals = repository.loadPinnedMeals()
             },
             modifier = Modifier.fillMaxWidth()

@@ -42,7 +42,7 @@ fun AnalysisScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             NbStatCard("Registros", stats.recordCount.toString(), "", Ink, Modifier.weight(1f))
             NbStatCard(
-                "Média",
+                "Média kcal",
                 String.format(Locale.ROOT, "%.1f", stats.averageOfAverages),
                 "",
                 PrimaryInk,
