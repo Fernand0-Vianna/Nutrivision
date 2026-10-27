@@ -135,8 +135,10 @@ class RecordRepository(private val context: Context) {
         }
     }
 
+    private val knownMealTypes = setOf("Café", "Almoço", "Jantar", "Lanche", "Outro")
+
     fun loadRecords(): List<FoodRecord> {
-        return try {
+        val raw = try {
             val json = recordsFile.readText()
             val type = object : TypeToken<List<FoodRecord>>() {}.type
             gson.fromJson<List<FoodRecord>>(json, type) ?: emptyList()
@@ -144,6 +146,16 @@ class RecordRepository(private val context: Context) {
             quarantine(recordsFile)
             emptyList()
         }
+        // Migração: registros antigos onde mealName era a categoria
+        val needsMigration = raw.any { it.mealType.isBlank() && it.mealName in knownMealTypes }
+        if (!needsMigration) return raw
+        val migrated = raw.map { r ->
+            if (r.mealType.isBlank() && r.mealName in knownMealTypes) {
+                r.copy(mealType = r.mealName, mealName = "Refeição")
+            } else r
+        }
+        writeAtomic(recordsFile, gson.toJson(migrated))
+        return migrated
     }
 
     fun recordsOfToday(): List<FoodRecord> {
