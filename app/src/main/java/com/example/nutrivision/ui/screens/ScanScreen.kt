@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -164,6 +166,7 @@ fun ScanScreen(
                     .size(44.dp)
                     .background(SurfaceGesture, RoundedCornerShape(4.dp))
                     .border(2.dp, Bone.copy(alpha = 0.35f), RoundedCornerShape(4.dp))
+                    .semantics { contentDescription = "Fechar scan" }
                     .clickable(enabled = !loading, onClick = onBack),
                 contentAlignment = Alignment.Center
             ) {

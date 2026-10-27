@@ -274,7 +274,11 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    NbIconButton(label = if (showKey) "OC" else "VER", onClick = { showKey = !showKey })
+                    NbIconButton(
+                        label = if (showKey) "OC" else "VER",
+                        onClick = { showKey = !showKey },
+                        contentDescription = if (showKey) "Ocultar chave Gemini" else "Mostrar chave Gemini"
+                    )
                     NbButtonPrimary(
                         text = if (keySaved) "Salvo!" else "Salvar chave",
                         onClick = {
@@ -331,9 +335,21 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    NbIconButton(label = "+250", onClick = { water = repository.addWaterMl(250.0) })
-                    NbIconButton(label = "+500", onClick = { water = repository.addWaterMl(500.0) })
-                    NbIconButton(label = "↺", onClick = { repository.resetWater(); water = 0.0 })
+                    NbIconButton(
+                        label = "+250",
+                        onClick = { water = repository.addWaterMl(250.0) },
+                        contentDescription = "Adicionar 250 ml de água"
+                    )
+                    NbIconButton(
+                        label = "+500",
+                        onClick = { water = repository.addWaterMl(500.0) },
+                        contentDescription = "Adicionar 500 ml de água"
+                    )
+                    NbIconButton(
+                        label = "↺",
+                        onClick = { repository.resetWater(); water = 0.0 },
+                        contentDescription = "Zerar água do dia"
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))

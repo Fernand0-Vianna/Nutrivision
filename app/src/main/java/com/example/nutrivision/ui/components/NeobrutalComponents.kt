@@ -18,6 +18,8 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,7 +60,7 @@ fun NbButtonPrimary(
             .nbHardShadow()
             .height(56.dp),
         shape = RoundedCornerShape(4.dp),
-        border = BorderStroke(2.dp, Ink),
+        border = BorderStroke(3.dp, Ink),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Primary,
@@ -89,7 +91,7 @@ fun NbButtonSecondary(
             .nbHardShadow()
             .height(52.dp)
             .background(if (enabled) containerColor else Elevated, RoundedCornerShape(4.dp))
-            .border(BorderStroke(2.dp, if (enabled) Ink else Muted), RoundedCornerShape(4.dp))
+            .border(BorderStroke(3.dp, if (enabled) Ink else Muted), RoundedCornerShape(4.dp))
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -112,7 +114,7 @@ fun NbCard(
         modifier = modifier
             .nbHardShadow()
             .background(Card, RoundedCornerShape(4.dp))
-            .border(BorderStroke(2.dp, Ink), RoundedCornerShape(4.dp))
+            .border(BorderStroke(3.dp, Ink), RoundedCornerShape(4.dp))
             .padding(16.dp),
         content = content
     )
@@ -220,7 +222,7 @@ fun NbChip(
                 offsetY = if (selected) 2.dp else 0.dp
             )
             .background(if (selected) Lime else Card, RoundedCornerShape(4.dp))
-            .border(2.dp, Ink, RoundedCornerShape(4.dp))
+            .border(3.dp, Ink, RoundedCornerShape(4.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
@@ -296,14 +298,22 @@ fun NbIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = Card,
-    size: Dp = 44.dp
+    size: Dp = 44.dp,
+    contentDescription: String? = null
 ) {
     Box(
         modifier = modifier
             .size(size)
             .nbHardShadow(offsetX = 4.dp, offsetY = 3.dp)
             .background(containerColor, RoundedCornerShape(4.dp))
-            .border(2.dp, Ink, RoundedCornerShape(4.dp))
+            .border(2.5.dp, Ink, RoundedCornerShape(4.dp))
+            .then(
+                if (contentDescription != null) {
+                    Modifier.semantics { this.contentDescription = contentDescription }
+                } else {
+                    Modifier
+                }
+            )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -316,14 +326,23 @@ fun NbMiniIconButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = Card
+    containerColor: Color = Card,
+    size: Dp = 28.dp,
+    contentDescription: String? = null
 ) {
     Box(
         modifier = modifier
-            .size(28.dp)
+            .size(size)
             .nbHardShadow(offsetX = 2.dp, offsetY = 2.dp)
             .background(containerColor, RoundedCornerShape(4.dp))
             .border(1.5.dp, Ink, RoundedCornerShape(4.dp))
+            .then(
+                if (contentDescription != null) {
+                    Modifier.semantics { this.contentDescription = contentDescription }
+                } else {
+                    Modifier
+                }
+            )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

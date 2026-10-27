@@ -290,9 +290,19 @@ private fun DiaryRow(
                 label = if (isPinned) "✓" else "📌",
                 onClick = onPin,
                 containerColor = if (isPinned) Lime else Card,
-                size = 40.dp
+                size = 44.dp,
+                contentDescription = if (isPinned) {
+                    "Remover ${record.mealName} dos pratos fixados"
+                } else {
+                    "Fixar ${record.mealName} nos pratos fixados"
+                }
             )
-            NbIconButton(label = "×", onClick = onDelete, size = 40.dp)
+            NbIconButton(
+                label = "×",
+                onClick = onDelete,
+                size = 44.dp,
+                contentDescription = "Excluir ${record.mealName}"
+            )
         }
     }
 }

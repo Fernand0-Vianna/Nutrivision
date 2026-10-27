@@ -95,16 +95,20 @@ fun HomeScreen(
                         letterSpacing = 0.4.sp
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .nbHardShadow(offsetX = 4.dp, offsetY = 4.dp)
-                        .background(Lime, RoundedCornerShape(4.dp))
-                        .border(2.dp, Ink, RoundedCornerShape(4.dp))
-                        .clickable { onNavigate(Screen.Profile) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = initials, fontWeight = FontWeight.ExtraBold, color = Ink)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    NbFabScan(onClick = onScan)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .nbHardShadow(offsetX = 4.dp, offsetY = 4.dp)
+                            .background(Lime, RoundedCornerShape(4.dp))
+                            .border(2.dp, Ink, RoundedCornerShape(4.dp))
+                            .clickable { onNavigate(Screen.Profile) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = initials, fontWeight = FontWeight.ExtraBold, color = Ink)
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -219,14 +223,32 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(12.dp))
             if (pinnedMeals.isEmpty()) {
                 NbCard(modifier = Modifier.fillMaxWidth()) {
-                    Text(text = "FIXE SEUS PRATOS FAVORITOS", fontWeight = FontWeight.ExtraBold, color = Ink)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "No resultado do scan, toque em FIXAR PRATO. Ele aparece aqui para adicionar ao dia em um toque.",
-                        fontWeight = FontWeight.Medium,
-                        color = Secondary,
-                        fontSize = 12.sp
-                    )
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .background(PinYellow, RoundedCornerShape(4.dp))
+                                    .border(1.dp, Ink, RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 7.dp, vertical = 5.dp)
+                            ) {
+                                Text(text = "📌", fontSize = 16.sp)
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "FIXE SEUS PRATOS FAVORITOS",
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Ink,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Fixe no resultado do scan e adicione ao dia em um toque.",
+                            fontWeight = FontWeight.Medium,
+                            color = Secondary,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             } else {
                 Row(
@@ -313,10 +335,6 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(120.dp))
         }
 
-        NbFabScan(
-            onClick = onScan,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 92.dp)
-        )
         BottomTabBar(
             selected = 0,
             onNavigate = onNavigate,
@@ -360,7 +378,12 @@ private fun PinnedMealCard(
             ) {
                 Text(text = "📌", fontSize = 12.sp)
             }
-            NbMiniIconButton(label = "×", onClick = onUnpin)
+            NbMiniIconButton(
+                label = "×",
+                onClick = onUnpin,
+                size = 36.dp,
+                contentDescription = "Remover ${meal.name} dos pratos fixados"
+            )
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
@@ -370,7 +393,6 @@ private fun PinnedMealCard(
             color = Ink,
             fontSize = 14.sp,
             maxLines = 2,
-            minLines = 2,
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.height(6.dp))
@@ -392,11 +414,11 @@ private fun PinnedMealCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(34.dp)
+                .height(44.dp)
                 .nbHardShadow(offsetX = 2.dp, offsetY = 2.dp)
                 .background(if (added) Lime else Card, RoundedCornerShape(4.dp))
                 .border(2.dp, Ink, RoundedCornerShape(4.dp))
-                .clickable(onClick = onAdd),
+                .clickable(enabled = !added, onClick = onAdd),
             contentAlignment = Alignment.Center
         ) {
             Text(
