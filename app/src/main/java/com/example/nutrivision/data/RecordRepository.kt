@@ -117,11 +117,21 @@ class RecordRepository(private val context: Context) {
         val media: MutableMap<String, Double> = loadMedia().toMutableMap()
         media.remove(id)
         writeAtomic(mediaFile, gson.toJson(media))
-        removed?.imagePath?.let { path ->
-            runCatching {
-                val file = File(path)
-                if (file.canonicalPath.startsWith(scansDir.canonicalPath)) file.delete()
-            }
+        deleteScanImageIfUnused(removed?.imagePath)
+    }
+
+    /** Apaga a foto do scan somente se nenhum registro nem prato fixado ainda a usa. */
+    private fun deleteScanImageIfUnused(path: String?) {
+        if (path.isNullOrBlank()) return
+        val file = File(path)
+        val insideScans = runCatching {
+            file.canonicalPath.startsWith(scansDir.canonicalPath)
+        }.getOrDefault(false)
+        if (!insideScans) return
+        val usedByRecord = loadRecords().any { it.imagePath == path }
+        val usedByPinned = loadPinnedMeals().any { it.imagePath == path }
+        if (!usedByRecord && !usedByPinned) {
+            runCatching { file.delete() }
         }
     }
 
@@ -193,13 +203,15 @@ class RecordRepository(private val context: Context) {
         calories: Double,
         protein: Double,
         carbs: Double,
-        fat: Double
+        fat: Double,
+        imagePath: String? = null
     ): Boolean {
         val current = loadPinnedMeals().toMutableList()
         val existing = current.firstOrNull { it.matches(name, calories) }
         return if (existing != null) {
             current.remove(existing)
             writeAtomic(pinnedFile, gson.toJson(current))
+            deleteScanImageIfUnused(existing.imagePath)
             false
         } else {
             current.add(
@@ -209,7 +221,8 @@ class RecordRepository(private val context: Context) {
                     calories = calories,
                     protein = protein,
                     carbs = carbs,
-                    fat = fat
+                    fat = fat,
+                    imagePath = imagePath
                 )
             )
             writeAtomic(pinnedFile, gson.toJson(current))
@@ -218,8 +231,10 @@ class RecordRepository(private val context: Context) {
     }
 
     fun deletePinnedMeal(id: String) {
+        val removed = loadPinnedMeals().firstOrNull { it.id == id }
         val current = loadPinnedMeals().filterNot { it.id == id }
         writeAtomic(pinnedFile, gson.toJson(current))
+        deleteScanImageIfUnused(removed?.imagePath)
     }
 
     /** Adiciona um prato fixado ao diário de hoje e devolve o registro criado. */

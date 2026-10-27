@@ -276,7 +276,7 @@ fun ResultScreen(
             enabled = canSave,
             containerColor = if (isPinned) Lime else Bone,
             onClick = {
-                repository.togglePinned(mealName, kcal, protein, carbs, fat)
+                repository.togglePinned(mealName, kcal, protein, carbs, fat, record.imagePath)
                 pinnedMeals = repository.loadPinnedMeals()
             },
             modifier = Modifier.fillMaxWidth()

@@ -34,6 +34,7 @@ data class PinnedMeal(
     val protein: Double = 0.0,
     val carbs: Double = 0.0,
     val fat: Double = 0.0,
+    val imagePath: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 ) {
     fun matches(name: String, calories: Double): Boolean =
@@ -44,6 +45,7 @@ data class PinnedMeal(
         FoodRecord(
             timestamp = timestamp,
             mealName = name.ifBlank { "Refeição" },
+            imagePath = imagePath,
             calories = calories,
             protein = protein,
             carbs = carbs,

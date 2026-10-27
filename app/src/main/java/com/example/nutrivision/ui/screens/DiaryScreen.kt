@@ -164,7 +164,8 @@ fun DiaryScreen(
                                         r.calories,
                                         r.protein,
                                         r.carbs,
-                                        r.fat
+                                        r.fat,
+                                        r.imagePath
                                     )
                                     refreshKey++
                                 },

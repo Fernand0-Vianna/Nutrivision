@@ -2,6 +2,7 @@ package com.example.nutrivision
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Bitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.nutrivision.data.FoodRecord
@@ -135,6 +136,41 @@ class RecordRepositoryTest {
             )
         )
         assertTrue(repository.loadPinnedMeals().isEmpty())
+    }
+
+    @Test
+    fun pinnedMealKeepsImageAfterRecordIsDeleted() {
+        val repository = RecordRepository(context)
+        val image = repository.saveScanImage(
+            Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888)
+        )
+        assertNotNull(image)
+        val imagePath = image!!
+
+        val record = FoodRecord(
+            mealName = "Prato com foto",
+            imagePath = imagePath,
+            calories = 410.0,
+            protein = 22.0,
+            carbs = 48.0,
+            fat = 15.0,
+            source = "gemini"
+        )
+        repository.saveRecord(record)
+        repository.togglePinned(
+            record.mealName,
+            record.calories,
+            record.protein,
+            record.carbs,
+            record.fat,
+            record.imagePath
+        )
+
+        repository.deleteRecord(record.id)
+        assertTrue(File(imagePath).exists())
+
+        repository.deletePinnedMeal(repository.loadPinnedMeals().first().id)
+        assertFalse(File(imagePath).exists())
     }
 
     @Test

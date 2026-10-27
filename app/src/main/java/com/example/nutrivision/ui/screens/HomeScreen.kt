@@ -332,7 +332,21 @@ private fun PinnedMealCard(
     onAdd: () -> Unit,
     onUnpin: () -> Unit
 ) {
+    val imagePath = meal.imagePath
     NbCard(modifier = Modifier.width(190.dp)) {
+        if (!imagePath.isNullOrBlank() && File(imagePath).exists()) {
+            AsyncImage(
+                model = File(imagePath),
+                contentDescription = "Foto de ${meal.name}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(82.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .border(2.dp, Ink, RoundedCornerShape(4.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
