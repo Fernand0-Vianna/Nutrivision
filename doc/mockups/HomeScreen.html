@@ -230,7 +230,11 @@
         .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
         .pin-badge .ms { font-size: 15px; }
         .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .tab-scan { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .tab-scan .ms { width: 54px; height: 54px; background-color: var(--lime); border: 3px solid var(--ink); border-radius: 4px; box-shadow: 4px 3px 0 var(--ink); transform: translateY(-14px); font-size: 26px; color: var(--ink); }
         .chip .ms { font-size: 15px; }
+        .mascot-float { animation: mfloat 2200ms ease-in-out infinite; }
+        @keyframes mfloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body>
@@ -243,8 +247,25 @@
                     <div class="date-label">Sexta-feira, 06 de novembro</div>
                 </div>
                 <div class="header-actions">
-                    <div class="scan-btn" title="Novo scan" onclick="window.location.href='ScanScreen.html'"><span class="ms">photo_camera</span></div>
                     <div class="avatar" onclick="window.location.href='ProfileScreen.html'">FV</div>
+                </div>
+            </div>
+
+            <!-- Mascote / status do dia -->
+            <div class="nb-card" style="display:flex;align-items:center;gap:14px;">
+                <svg class="mascot-float" width="72" height="72" viewBox="0 0 220 220" aria-label="Mascote do Nutrivision">
+                    <rect x="80" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                    <rect x="116" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                    <rect x="34" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                    <rect x="160" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                    <rect x="52" y="44" width="116" height="108" rx="26" fill="#C9F73D" stroke="#0B0F0D" stroke-width="10"/>
+                    <path d="M74 104 q13 -18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                    <path d="M120 104 q13 -18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                </svg>
+                <div style="flex:1;">
+                    <span class="chip" style="display:inline-block;padding:3px 8px;font-size:10px;background-color:var(--lime);border-width:1px;">HOJE</span>
+                    <div style="font-family:var(--font-archivo);font-weight:800;font-size:18px;margin-top:6px;letter-spacing:-0.3px;">NO RITMO</div>
+                    <div style="font-weight:500;font-size:12px;color:var(--secondary);margin-top:2px;">Faltam 990 kcal para fechar a meta.</div>
                 </div>
             </div>
 
@@ -354,12 +375,11 @@
             </div>
         </div>
 
-        <div class="fab" title="Novo scan" onclick="window.location.href='ScanScreen.html'"><span class="ms">photo_camera</span></div>
-
         <nav class="tab-bar">
             <a class="tab active" href="HomeScreen.html"><span class="ms">home</span><span class="tab-label">Início</span><span class="tab-underline"></span></a>
             <a class="tab" href="DiaryScreen.html"><span class="ms">description</span><span class="tab-label">Diário</span><span class="tab-underline"></span></a>
-            <a class="tab" href="ProgressScreen.html"><span class="ms">monitoring</span><span class="tab-label">Progresso</span><span class="tab-underline"></span></a>
+            <a class="tab-scan" href="ScanScreen.html" title="Novo scan"><span class="ms">qr_code_scanner</span></a>
+            <a class="tab" href="ProgressScreen.html"><span class="ms">bar_chart</span><span class="tab-label">Progresso</span><span class="tab-underline"></span></a>
             <a class="tab" href="ProfileScreen.html"><span class="ms">person</span><span class="tab-label">Perfil</span><span class="tab-underline"></span></a>
         </nav>
     </div>

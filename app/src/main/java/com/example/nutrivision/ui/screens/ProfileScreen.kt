@@ -369,6 +369,7 @@ fun ProfileScreen(
         BottomTabBar(
             selected = 3,
             onNavigate = onNavigate,
+            onScan = { onNavigate(Screen.Scan) },
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }

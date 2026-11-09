@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.nutrivision.ui.components.drawMascot
 import com.example.nutrivision.ui.theme.ArchivoFamily
 import com.example.nutrivision.ui.theme.Bone
 import com.example.nutrivision.ui.theme.Elevated
@@ -191,61 +192,3 @@ private fun NbProgressBarLocal(progress: Float) {
     }
 }
 
-/** Desenha o mascote na área de 220x220, escalando para o tamanho do Canvas. */
-private fun DrawScope.drawMascot() {
-    val s = size.minDimension / 220f
-    val dx = (size.width - 220f * s) / 2f
-    val dy = (size.height - 220f * s) / 2f
-
-    withTransform({
-        translate(dx, dy)
-        scale(s, s, Offset.Zero)
-    }) {
-        // pernas
-        drawRoundRect(
-            color = Ink,
-            topLeft = Offset(80f, 150f),
-            size = Size(24f, 40f),
-            cornerRadius = CornerRadius(10f, 10f)
-        )
-        drawRoundRect(
-            color = Ink,
-            topLeft = Offset(116f, 150f),
-            size = Size(24f, 40f),
-            cornerRadius = CornerRadius(10f, 10f)
-        )
-        // braços
-        drawRoundRect(
-            color = Ink,
-            topLeft = Offset(34f, 106f),
-            size = Size(26f, 48f),
-            cornerRadius = CornerRadius(13f, 13f)
-        )
-        drawRoundRect(
-            color = Ink,
-            topLeft = Offset(160f, 106f),
-            size = Size(26f, 48f),
-            cornerRadius = CornerRadius(13f, 13f)
-        )
-        // cabeça
-        drawRoundRect(
-            color = Lime,
-            topLeft = Offset(52f, 44f),
-            size = Size(116f, 108f),
-            cornerRadius = CornerRadius(26f, 26f)
-        )
-        drawRoundRect(
-            color = Ink,
-            topLeft = Offset(52f, 44f),
-            size = Size(116f, 108f),
-            cornerRadius = CornerRadius(26f, 26f),
-            style = Stroke(width = 10f)
-        )
-        // olhos sorridentes
-        val eyes = Path().apply {
-            moveTo(74f, 104f); quadraticBezierTo(87f, 86f, 100f, 104f)
-            moveTo(120f, 104f); quadraticBezierTo(133f, 86f, 146f, 104f)
-        }
-        drawPath(path = eyes, color = Ink, style = Stroke(width = 9f, cap = StrokeCap.Round))
-    }
-}

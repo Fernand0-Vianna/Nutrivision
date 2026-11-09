@@ -28,9 +28,9 @@ import com.example.nutrivision.data.FoodRecord
 import com.example.nutrivision.data.PinnedMeal
 import com.example.nutrivision.data.RecordRepository
 import com.example.nutrivision.ui.components.BottomTabBar
+import com.example.nutrivision.ui.components.Mascot
 import com.example.nutrivision.ui.components.NbCard
 import com.example.nutrivision.ui.components.NbChip
-import com.example.nutrivision.ui.components.NbFabScan
 import com.example.nutrivision.ui.components.NbMiniIconButton
 import com.example.nutrivision.ui.components.NbProgressBar
 import com.example.nutrivision.ui.components.nbHardShadow
@@ -66,6 +66,16 @@ fun HomeScreen(
         .mapNotNull { it.firstOrNull()?.uppercaseChar() }
         .joinToString("")
         .ifEmpty { "NV" }
+
+    val remaining = (goals.calories - stats.calories).coerceAtLeast(0.0)
+    val status = when {
+        records.isEmpty() -> "VAMOS COMEÇAR" to "Registre sua primeira refeição de hoje."
+        goals.calories > 0 && stats.calories >= goals.calories ->
+            "META BATIDA" to "Você fechou a meta de hoje. Bom trabalho!"
+        goals.calories > 0 && remaining <= goals.calories * 0.2 ->
+            "QUASE LÁ" to "Faltam ${remaining.toInt()} kcal para fechar a meta."
+        else -> "NO RITMO" to "Faltam ${remaining.toInt()} kcal para fechar a meta."
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(Bone)) {
         Column(
@@ -110,6 +120,46 @@ fun HomeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(text = initials, fontWeight = FontWeight.ExtraBold, color = Ink)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+
+            NbCard(modifier = Modifier.fillMaxWidth()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Mascot(modifier = Modifier.size(72.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Box(
+                            modifier = Modifier
+                                .background(Lime, RoundedCornerShape(4.dp))
+                                .border(1.dp, Ink, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "HOJE",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Ink,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = status.first,
+                            fontFamily = ArchivoFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 18.sp,
+                            color = Ink,
+                            letterSpacing = (-0.3).sp
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = status.second,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp,
+                            color = Secondary
+                        )
                     }
                 }
             }
@@ -360,13 +410,10 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(120.dp))
         }
 
-        NbFabScan(
-            onClick = onScan,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 92.dp)
-        )
         BottomTabBar(
             selected = 0,
             onNavigate = onNavigate,
+            onScan = onScan,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }

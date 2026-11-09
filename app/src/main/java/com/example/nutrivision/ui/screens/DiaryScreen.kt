@@ -185,6 +185,7 @@ fun DiaryScreen(
         BottomTabBar(
             selected = 1,
             onNavigate = onNavigate,
+            onScan = { onNavigate(Screen.Scan) },
             modifier = Modifier.align(Alignment.BottomCenter)
         )
 

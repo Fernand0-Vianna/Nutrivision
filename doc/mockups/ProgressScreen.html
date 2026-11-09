@@ -302,6 +302,8 @@
         .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
         .pin-badge .ms { font-size: 15px; }
         .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .tab-scan { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .tab-scan .ms { width: 54px; height: 54px; background-color: var(--lime); border: 3px solid var(--ink); border-radius: 4px; box-shadow: 4px 3px 0 var(--ink); transform: translateY(-14px); font-size: 26px; color: var(--ink); }
         .chip .ms { font-size: 15px; }
     </style>
 </head>
@@ -407,7 +409,8 @@
         <nav class="tab-bar">
             <a class="tab" href="HomeScreen.html"><span class="ms">home</span><span class="tab-label">Início</span><span class="tab-underline"></span></a>
             <a class="tab" href="DiaryScreen.html"><span class="ms">description</span><span class="tab-label">Diário</span><span class="tab-underline"></span></a>
-            <a class="tab active" href="ProgressScreen.html"><span class="ms">monitoring</span><span class="tab-label">Progresso</span><span class="tab-underline"></span></a>
+            <a class="tab-scan" href="ScanScreen.html" title="Novo scan"><span class="ms">qr_code_scanner</span></a>
+            <a class="tab active" href="ProgressScreen.html"><span class="ms">bar_chart</span><span class="tab-label">Progresso</span><span class="tab-underline"></span></a>
             <a class="tab" href="ProfileScreen.html"><span class="ms">person</span><span class="tab-label">Perfil</span><span class="tab-underline"></span></a>
         </nav>
     </div>

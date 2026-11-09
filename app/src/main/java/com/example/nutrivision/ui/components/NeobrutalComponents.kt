@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import com.example.nutrivision.ui.theme.*
@@ -159,15 +160,15 @@ fun NbFabScan(
 fun BottomTabBar(
     selected: Int,
     onNavigate: ((com.example.nutrivision.ui.screens.Screen) -> Unit)? = null,
+    onScan: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(84.dp)
             .background(Card)
             .border(BorderStroke(3.dp, Ink)),
-        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         val tabs = listOf(
@@ -176,34 +177,69 @@ fun BottomTabBar(
             TabItem("PROGRESSO", com.example.nutrivision.ui.screens.Screen.Progress, Icons.Filled.BarChart),
             TabItem("PERFIL", com.example.nutrivision.ui.screens.Screen.Profile, Icons.Filled.Person)
         )
-        tabs.forEachIndexed { index, item ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+        TabCell(tabs[0], selected == 0, onNavigate, Modifier.weight(1f))
+        TabCell(tabs[1], selected == 1, onNavigate, Modifier.weight(1f))
+        // Botão SCAN no centro da barra
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable(enabled = onNavigate != null) { onNavigate?.invoke(item.screen) }
+                    .offset(y = (-14).dp)
+                    .size(56.dp)
+                    .nbHardShadow(offsetX = 4.dp, offsetY = 3.dp)
+                    .background(Lime, RoundedCornerShape(4.dp))
+                    .border(BorderStroke(3.dp, Ink), RoundedCornerShape(4.dp))
+                    .clickable(enabled = onScan != null) { onScan?.invoke() },
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.label,
+                    imageVector = Icons.Filled.QrCodeScanner,
+                    contentDescription = "Novo scan",
                     tint = Ink,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(26.dp)
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = item.label,
-                    fontWeight = if (index == selected) FontWeight.ExtraBold else FontWeight.Bold,
-                    color = Ink,
-                    fontSize = 11.sp,
-                    letterSpacing = 1.1.sp
-                )
-                if (index == selected) {
-                    Spacer(modifier = Modifier.height(3.dp))
-                    Box(modifier = Modifier.width(24.dp).height(2.dp).background(Ink))
-                }
             }
+        }
+        TabCell(tabs[2], selected == 2, onNavigate, Modifier.weight(1f))
+        TabCell(tabs[3], selected == 3, onNavigate, Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun TabCell(
+    item: TabItem,
+    isSelected: Boolean,
+    onNavigate: ((com.example.nutrivision.ui.screens.Screen) -> Unit)?,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxHeight()
+            .clickable(enabled = onNavigate != null) { onNavigate?.invoke(item.screen) }
+    ) {
+        Icon(
+            imageVector = item.icon,
+            contentDescription = item.label,
+            tint = Ink,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = item.label,
+            fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
+            color = Ink,
+            fontSize = 11.sp,
+            letterSpacing = 1.1.sp
+        )
+        if (isSelected) {
+            Spacer(modifier = Modifier.height(3.dp))
+            Box(modifier = Modifier.width(24.dp).height(2.dp).background(Ink))
         }
     }
 }

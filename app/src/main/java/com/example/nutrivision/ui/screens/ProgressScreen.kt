@@ -240,6 +240,7 @@ fun ProgressScreen(
         BottomTabBar(
             selected = 2,
             onNavigate = onNavigate,
+            onScan = { onNavigate(Screen.Scan) },
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
