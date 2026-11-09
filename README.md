@@ -94,7 +94,18 @@ No Xiaomi/MIUI, ative em Opções do desenvolvedor: **Instalar via USB** e **Dep
 ## Mascote
 
 <div align="center">
-  <img src="doc/mascote.png" width="220" alt="Mascote do Nutrivision">
+  <img src="doc/mascote.png" width="200" alt="Mascote do Nutrivision">
 </div>
 
-O Nutrivision tem um mascote: um quadradinho verde-limão que aparece na Home e reage ao seu dia. Ele fica animado quando você está no ritmo da meta e cobra atenção quando não há registro. A ideia é deixar o acompanhamento mais leve do que uma lista fria de números.
+O Nutrivision tem um mascote: um quadradinho verde-limão que aparece na Home e reage ao seu dia. A carinha muda conforme o progresso das calorias em relação à meta:
+
+<div align="center">
+  <img src="doc/mascote-reacoes.png" width="820" alt="Reações do mascote: muito feliz, neutra, triste e nocaute">
+</div>
+
+- **Muito feliz** — meta do dia batida
+- **Neutra** — no ritmo, indo bem
+- **Triste** — abaixo da meta
+- **Nocaute** — nenhum registro ainda
+
+Ele ainda faz uma flutuação suave contínua, para o acompanhamento não parecer uma lista fria de números.

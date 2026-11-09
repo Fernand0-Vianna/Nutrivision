@@ -29,6 +29,7 @@ import com.example.nutrivision.data.PinnedMeal
 import com.example.nutrivision.data.RecordRepository
 import com.example.nutrivision.ui.components.BottomTabBar
 import com.example.nutrivision.ui.components.Mascot
+import com.example.nutrivision.ui.components.MascotMood
 import com.example.nutrivision.ui.components.NbCard
 import com.example.nutrivision.ui.components.NbChip
 import com.example.nutrivision.ui.components.NbMiniIconButton
@@ -68,13 +69,35 @@ fun HomeScreen(
         .ifEmpty { "NV" }
 
     val remaining = (goals.calories - stats.calories).coerceAtLeast(0.0)
-    val status = when {
-        records.isEmpty() -> "VAMOS COMEÇAR" to "Registre sua primeira refeição de hoje."
-        goals.calories > 0 && stats.calories >= goals.calories ->
-            "META BATIDA" to "Você fechou a meta de hoje. Bom trabalho!"
-        goals.calories > 0 && remaining <= goals.calories * 0.2 ->
-            "QUASE LÁ" to "Faltam ${remaining.toInt()} kcal para fechar a meta."
-        else -> "NO RITMO" to "Faltam ${remaining.toInt()} kcal para fechar a meta."
+    val mood: MascotMood
+    val statusTitle: String
+    val statusSubtitle: String
+    when {
+        records.isEmpty() -> {
+            mood = MascotMood.KO
+            statusTitle = "SEM REGISTRO"
+            statusSubtitle = "Registre sua primeira refeição de hoje."
+        }
+        goals.calories <= 0 -> {
+            mood = MascotMood.NEUTRAL
+            statusTitle = "NO RITMO"
+            statusSubtitle = "Defina sua meta para acompanhar o dia."
+        }
+        stats.calories >= goals.calories -> {
+            mood = MascotMood.HAPPY
+            statusTitle = "META BATIDA"
+            statusSubtitle = "Você fechou a meta de hoje. Bom trabalho!"
+        }
+        stats.calories >= goals.calories * 0.5 -> {
+            mood = MascotMood.NEUTRAL
+            statusTitle = "NO RITMO"
+            statusSubtitle = "Faltam ${remaining.toInt()} kcal para fechar a meta."
+        }
+        else -> {
+            mood = MascotMood.SAD
+            statusTitle = "AINDA DÁ TEMPO"
+            statusSubtitle = "Faltam ${remaining.toInt()} kcal para fechar a meta."
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Bone)) {
@@ -127,7 +150,7 @@ fun HomeScreen(
 
             NbCard(modifier = Modifier.fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Mascot(modifier = Modifier.size(72.dp))
+                    Mascot(mood = mood, modifier = Modifier.size(72.dp))
                     Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Box(
@@ -146,7 +169,7 @@ fun HomeScreen(
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = status.first,
+                            text = statusTitle,
                             fontFamily = ArchivoFamily,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 18.sp,
@@ -155,7 +178,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = status.second,
+                            text = statusSubtitle,
                             fontWeight = FontWeight.Medium,
                             fontSize = 12.sp,
                             color = Secondary

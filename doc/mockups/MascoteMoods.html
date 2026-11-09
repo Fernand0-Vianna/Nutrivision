@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Reações do mascote</title>
+    <style>
+        :root {
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --water: #0EA5E9;
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 28px; background: var(--bone);
+            font-family: var(--font-inter); color: var(--ink);
+        }
+        .grid { display: flex; gap: 18px; flex-wrap: wrap; }
+        .card {
+            flex: 1; min-width: 190px; background: var(--white);
+            border: 3px solid var(--ink); border-radius: 4px;
+            box-shadow: 6px 4px 0 var(--ink); padding: 16px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .card svg { width: 120px; height: 120px; animation: mfloat 2200ms ease-in-out infinite; }
+        .card:nth-child(2) svg { animation-delay: .3s; }
+        .card:nth-child(3) svg { animation-delay: .6s; }
+        .card:nth-child(4) svg { animation-delay: .9s; }
+        @keyframes mfloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .name {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 15px;
+            text-transform: uppercase; margin-top: 10px; letter-spacing: -.2px;
+        }
+        .desc { font-size: 11px; font-weight: 600; color: var(--muted); text-align: center; margin-top: 4px; }
+        .tag {
+            margin-top: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: .6px; color: var(--primary-ink);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <!-- MUITO FELIZ -->
+        <div class="card">
+            <svg viewBox="0 0 220 220" aria-label="Muito feliz">
+                <rect x="80" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="116" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="34" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="160" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="52" y="44" width="116" height="108" rx="26" fill="#C9F73D" stroke="#0B0F0D" stroke-width="10"/>
+                <path d="M74 104 q13 -18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <path d="M120 104 q13 -18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <path d="M90 126 q20 18 40 0" fill="none" stroke="#0B0F0D" stroke-width="8" stroke-linecap="round"/>
+            </svg>
+            <div class="name">Muito feliz</div>
+            <div class="desc">Meta do dia batida</div>
+            <div class="tag">Meta batida</div>
+        </div>
+
+        <!-- NEUTRA -->
+        <div class="card">
+            <svg viewBox="0 0 220 220" aria-label="Neutra">
+                <rect x="80" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="116" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="34" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="160" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="52" y="44" width="116" height="108" rx="26" fill="#C9F73D" stroke="#0B0F0D" stroke-width="10"/>
+                <line x1="76" y1="102" x2="98" y2="102" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <line x1="122" y1="102" x2="144" y2="102" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <line x1="100" y1="130" x2="120" y2="130" stroke="#0B0F0D" stroke-width="8" stroke-linecap="round"/>
+            </svg>
+            <div class="name">Neutra</div>
+            <div class="desc">No ritmo, indo bem</div>
+            <div class="tag">No ritmo</div>
+        </div>
+
+        <!-- TRISTE -->
+        <div class="card">
+            <svg viewBox="0 0 220 220" aria-label="Triste">
+                <rect x="80" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="116" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="34" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="160" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="52" y="44" width="116" height="108" rx="26" fill="#C9F73D" stroke="#0B0F0D" stroke-width="10"/>
+                <path d="M74 96 q13 18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <path d="M120 96 q13 18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <path d="M90 136 q20 -16 40 0" fill="none" stroke="#0B0F0D" stroke-width="8" stroke-linecap="round"/>
+                <path d="M152 108 q8 12 0 20 q-8 -8 0 -20" fill="#0EA5E9"/>
+            </svg>
+            <div class="name">Triste</div>
+            <div class="desc">Abaixo da meta</div>
+            <div class="tag">Ainda dá tempo</div>
+        </div>
+
+        <!-- NOCAUTE -->
+        <div class="card">
+            <svg viewBox="0 0 220 220" aria-label="Nocaute">
+                <rect x="80" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="116" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="34" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="160" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="52" y="44" width="116" height="108" rx="26" fill="#C9F73D" stroke="#0B0F0D" stroke-width="10"/>
+                <g stroke="#0B0F0D" stroke-width="8" stroke-linecap="round">
+                    <line x1="73" y1="86" x2="101" y2="114"/><line x1="101" y1="86" x2="73" y2="114"/>
+                    <line x1="119" y1="86" x2="147" y2="114"/><line x1="147" y1="86" x2="119" y2="114"/>
+                </g>
+                <circle cx="110" cy="132" r="7" fill="none" stroke="#0B0F0D" stroke-width="7"/>
+            </svg>
+            <div class="name">Nocaute</div>
+            <div class="desc">Nenhum registro ainda</div>
+            <div class="tag">Sem registro</div>
+        </div>
+    </div>
+</body>
+</html>
