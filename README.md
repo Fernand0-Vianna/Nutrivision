@@ -1,160 +1,91 @@
+<div align="center">
+
 # Nutrivision
 
-Um assistente pessoal para acompanhamento nutricional e análise de refeições, criado com o objetivo de ajudar você a entender melhor o que você come.
+**Seu diário alimentar**
 
-## Como Funciona
+Fotografe a refeição, veja os valores nutricionais e acompanhe o dia.
+Tudo salvo no aparelho, sem conta e sem internet obrigatória.
 
-### 1. REGISTRE SUAS REFEIÇÕES E VEJA O QUE VOCÊ COME
+</div>
 
-**É o scanner:** A partir de uma foto, o app estima automaticamente os valores nutricionais de cada refeição usando análise de imagem com IA.
+---
 
-**É o diário:** Salve e organize as refeições de hoje, da semana ou de um período personalizado. Filtre por refeição (café, almoço, jantar) ou por dia.
+## O que o app faz
 
-**É o acompanhamento:** Acompanhe a evolução do seu peso, das suas calorias e dos seus macronutrientes através de gráficos de fácil entendimento.
+**Scan.** A partir de uma foto, o app estima calorias, proteína, carboidrato e gordura do prato usando análise de imagem (Google Gemini). Dá para ajustar os valores antes de salvar, ou registrar tudo manualmente se preferir.
 
-**É o perfil:** Cadastre as suas metas diárias, restrições de saúde e condições especiais.
+**Diário.** Guarda as refeições por dia. Filtra por período (hoje, 7 dias, 30 dias, tudo) e por tipo (café, almoço, jantar, lanche, outro). Cada registro pode ter foto, e a exclusão pede confirmação.
 
-**É o histórico:** Exporte os dados para um CSV e acompanhe tudo em qualquer lugar.
+**Progresso.** Mostra a evolução do peso num gráfico de linha, a média diária de macros contra as metas, o histórico por dia e um insight curto sobre o período. Exporta tudo em CSV.
 
-## Fluxo de Uso
+**Água e peso.** Contador de água do dia na Home e no Perfil, e registro de peso por dia com atualização do IMC.
 
-A partir do "LOGIN", você cria seu perfil com:
-- Nome, idade, altura, peso atual
-- Metas calóricas e nutricionais (calorias, proteína, carboidrato, gordura)
-- Nível de atividade e objetivos (perder peso, manter, ganhar massa)
-- Restrições e alergias alimentares
+**Pratos fixados.** Marque um prato favorito e adicione ao dia em um toque, sem escanear de novo.
 
-A partir do "HOME", você:
-- Verifica suas estatísticas diárias (calorias, macros, água)
-- Adiciona refeições rapidamente:
-  - Scan: aponta a câmera e registra a refeição automaticamente
-  - Manual: insere os valores diretamente
-  - Fixado: adiciona um prato favorito com um toque
-- Acessa as outras telas do aplicativo
+**Perfil.** Metas diárias, nome e dados físicos, objetivo, nível de atividade, intolerâncias, alergias e condições de saúde. O app usa isso para gerar avisos personalizados ("Atenção para você") no resultado do scan.
 
-## Recursos Principais
+## Privacidade e dados
 
-### Scan: Análise por Imagem
-Use a câmera para fotografar alimentos. A IA identifica o prato e estima os valores nutricionais.
+- Sem conta e sem login. Nada vai para a nuvem.
+- Registros em JSON dentro da pasta privada do app (`.relatorio/`).
+- Fotos ficam no armazenamento privado do aplicativo.
+- A chave da API Gemini é opcional: pode ser colada no Perfil (fica só no aparelho) ou definida em `local.properties`.
 
-### Diário: Organização Intuitiva
-Visualize o histórico completo de refeições com dados reais. Filtre por:
-- Período: hoje, 7 dias, 30 dias ou tudo
-- Refeição: café, almoço, jantar, lanche, outra
-- Fonte: IA, manual ou fixada
+## Design
 
-### Gráficos: Evolução Visual
-Visualize o progresso em gráficos de linha (peso) e barras (macros).
-Entenda se você está no caminho certo para atingir suas metas.
+Estética neobrutalista híbrida: base limpa com bordas pretas, sombra dura sem desfoque e verde como destaque. Tipografia Archivo (títulos), Inter Tight (corpo) e Space Mono (números).
 
-### Exportar: Transferência de Dados
-Exporte tudo para um arquivo CSV e compartilhe.
-Importe nos principais apps de saúde e bem-estar.
+## Tecnologias
 
-### Perfil: Personalização Avançada
-Altere as metas diárias, adicione restrições de saúde, registre informações pessoais.
-Acompanhe alertas personalizados gerados pela IA.
+Kotlin · Jetpack Compose · minSdk 24 / targetSdk 34 · Coil · Retrofit/OkHttp · Gson · Navigation Compose
 
-## Design System: Neobrutalismo Híbrido
-
-O app usa um design system que mistura minimalismo com elementos brutais:
-- Bordas: 3px e cantos: 4px
-- Sombra: dura (6dp à direita, 4dp abaixo) sem blur
-- Fonte: Archivo (títulos), Inter Tight (corpo), Space Mono (números)
-- Paleta de cores: verde lima (#C9F73D), verde (#17B26A), fundo creme (#F5F3E9) e texto escuro (#0B0F0D)
-
-**Icone Mascote:** Um quadro de scanner em forma de diamante estilizado com cantos pontiagudos, que é o rosto icônico do Nutrivision.
-
-## Funciona Offline
-
-O app funciona 100% offline - sem necessidade de internet.
-- Offline: todos os registros são salvos localmente no dispositivo
-- Sem conta: sem login necessário
-- Privacidade: seus dados estão com você
-
-## Testes Automatizados
-
-Todos os principais componentes são testados:
-- Testes unitários: 3 testes (média, IMC, alertas de saúde)
-- Testes instrumentados: 4-8 testes de navegação
-- Testes visuais: validação de componentes no dispositivo
-
-## Instalação e Execução
+## Como compilar
 
 ```bash
-# Build do APK de debug
+# APK de debug
 ./gradlew :app:assembleDebug
 
-# Instalação manual no dispositivo Xiaomi 65e67bb
+# Instalar no aparelho conectado
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 
-# Instalação manual no emulador
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+# Testes unitários
+./gradlew :app:testDebugUnitTest
 
 # Testes instrumentados (emulador)
-ANDROID_SERIAL=emulator-5554 ./gradlew :app:Parar de fingir que é possível coletar dados do usuário localmente. :connectedDebugAndroidTest
+ANDROID_SERIAL=emulator-5554 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-**Observação:**
-- No celular Xiaomi, ative as opções do desenvolvedor: "Instalar via USB" e "Depuração USB (Configurações de segurança)"
-- A chave Gemini está configurável no perfil
+No Xiaomi/MIUI, ative em Opções do desenvolvedor: **Instalar via USB** e **Depuração USB (Configurações de segurança)**.
 
-## Escala de Projeto
+---
 
-**Telas:** 9 telas (Login → Onboarding → Home → Scan → Result → Analysis → Diary → Progress → Profile)
+## Telas
 
-**Componentes:** 50+ componentes reutilizáveis (cards, chips, botões, barras de progresso)
+<table>
+  <tr>
+    <td align="center"><img src="doc/screens/01-login.png" width="220"><br><sub><b>Login</b></sub></td>
+    <td align="center"><img src="doc/screens/02-onboarding.png" width="220"><br><sub><b>Onboarding</b></sub></td>
+    <td align="center"><img src="doc/screens/03-home.png" width="220"><br><sub><b>Home</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/screens/04-scan.png" width="220"><br><sub><b>Scan</b></sub></td>
+    <td align="center"><img src="doc/screens/05-resultado.png" width="220"><br><sub><b>Resultado</b></sub></td>
+    <td align="center"><img src="doc/screens/06-analise.png" width="220"><br><sub><b>Análise</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/screens/07-diario.png" width="220"><br><sub><b>Diário</b></sub></td>
+    <td align="center"><img src="doc/screens/08-progresso.png" width="220"><br><sub><b>Progresso</b></sub></td>
+    <td align="center"><img src="doc/screens/09-perfil.png" width="220"><br><sub><b>Perfil</b></sub></td>
+  </tr>
+</table>
 
-**Testes:** A maioria dos componentes testados
+---
 
-**Métricas:** Cada refeição registrada gera 4 registros (refeição, macros, peso, água)
+## Mascote
 
-## Agradecimentos
+<div align="center">
+  <img src="doc/mascote.png" width="220" alt="Mascote do Nutrivision">
+</div>
 
-O Nutrivision é um esforço para criar um app de saúde que seja:
-- **Privado:** sem dados na nuvem, sem tracking
-- **Rápido:** Jetpack Compose com persistência local otimizada
-- **Fácil de usar:** interface intuitiva com widgets grandes e buttons
-- **Personalizável:** completamente personalizado com metas, restrições e objetivos
-- **Testado:** testado de forma completa no dispositivo
-
-
-
-
-## Screenshots
-
-### Tela Inicial
-![Login](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/login.png)
-
-### Tutorial Inicial
-![Onboarding](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/onboarding.png)
-
-### Home Screen
-![Home](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/home.png)
-
-### Scan
-![Scan](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/scan.png)
-
-### Resultado
-![Result](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/result.png)
-
-### Análise
-![Analysis](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/analysis.png)
-
-### Diário
-![Diary](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/diary.png)
-
-### Progresso
-![Progress](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/progress.png)
-
-### Perfil
-![Profile](https://raw.githubusercontent.com/fernandovianna/Nutrivision/main/doc/invocations/profile.png)
-
-## Mascote do Nutrivision
-
-O Nutrivision tem um mascote amigável que representa o espírito do nosso app:
-
-![Mascote do Nutrivision](https://github.com/fernandovianna/Nutrivision/blob/main/doc/mascot.png?raw=true)
-
-O mascote é um frame de scanner, simbolizando nossa abordagem de análise visual de alimentos, enquanto seus detalhes em forma de diamante lhe dão um visual amigável e distinto.
-
+O Nutrivision tem um mascote: um quadradinho verde-limão que aparece na Home e reage ao seu dia. Ele fica animado quando você está no ritmo da meta e cobra atenção quando não há registro. A ideia é deixar o acompanhamento mais leve do que uma lista fria de números.
