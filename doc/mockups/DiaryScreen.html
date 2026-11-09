@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Diário alimentar</title>
+    <style>
+        :root {
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+            --danger-ink: #C2321D;
+
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 24px 0;
+            background-color: #2A322D;
+            font-family: var(--font-inter);
+            color: var(--ink);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--bone);
+            border: 3px solid var(--ink);
+            border-radius: 8px;
+            box-shadow: 6px 4px 0 rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen-body {
+            padding: 48px 16px 100px;
+        }
+
+        .section-header {
+            font-family: var(--font-archivo);
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--ink);
+            text-transform: uppercase;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-top: 4px;
+        }
+
+        .stat-row { display: flex; gap: 8px; margin-top: 16px; }
+
+        .stat-card {
+            flex: 1;
+            background-color: var(--white);
+            border: 3px solid var(--ink);
+            border-radius: 4px;
+            box-shadow: 6px 4px 0 var(--ink);
+            padding: 16px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 11px; font-weight: 700; color: var(--secondary);
+            text-transform: uppercase; letter-spacing: 1.1px;
+        }
+
+        .stat-card .stat-value {
+            font-family: var(--font-mono); font-weight: 700; font-size: 28px; color: var(--ink);
+        }
+        .stat-card .stat-value.green { color: var(--primary-ink); }
+
+        .chips-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+        .chip {
+            background-color: var(--white);
+            border: 3px solid var(--ink);
+            border-radius: 4px;
+            padding: 8px 14px;
+            font-family: var(--font-inter);
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--ink);
+            cursor: pointer;
+        }
+
+        .chip.selected {
+            background-color: var(--lime);
+            box-shadow: 3px 2px 0 var(--ink);
+        }
+
+        .nb-card {
+            background-color: var(--white);
+            border: 3px solid var(--ink);
+            border-radius: 4px;
+            box-shadow: 6px 4px 0 var(--ink);
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .day-header .day-label {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 13px;
+            text-transform: uppercase; color: var(--ink);
+        }
+
+        .day-header .day-stats { font-weight: 700; color: var(--muted); font-size: 11px; }
+
+        .diary-row { display: flex; align-items: center; gap: 12px; }
+
+        .meal-thumb {
+            width: 64px; height: 64px; background-color: var(--lime);
+            border: 2px solid var(--ink); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+
+        .diary-info { flex: 1; }
+        .diary-info .meal-name {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 15px;
+            text-transform: uppercase; color: var(--ink);
+        }
+        .diary-info .meal-time { font-weight: 700; color: var(--muted); font-size: 11px; float: right; }
+        .diary-info .meal-kcal { font-weight: 700; color: var(--secondary); font-size: 12px; margin-top: 4px; }
+        .diary-info .meal-macros { font-weight: 700; color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+        .diary-actions {
+            display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;
+        }
+
+        .icon-btn {
+            width: 44px; height: 44px; background-color: var(--white);
+            border: 2.5px solid var(--ink); border-radius: 4px;
+            box-shadow: 4px 3px 0 var(--ink);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 800; cursor: pointer;
+        }
+        .icon-btn.pinned { background-color: var(--lime); }
+
+        .empty-card {
+            text-align: center; padding: 32px 16px;
+        }
+        .empty-card .title {
+            font-family: var(--font-archivo); font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .empty-card .desc { font-weight: 500; color: var(--secondary); margin-top: 4px; font-size: 13px; }
+
+        /* Tab bar */
+        .tab-bar {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+            background-color: var(--white); border-top: 3px solid var(--ink);
+            display: flex; justify-content: space-evenly; align-items: center;
+        }
+        .tab {
+            flex: 1; height: 100%; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; cursor: pointer; text-decoration: none;
+        }
+        .tab .tab-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 1.1px;
+            color: var(--ink); text-transform: uppercase;
+        }
+        .tab.active .tab-label { font-weight: 800; }
+        .tab .tab-underline { width: 24px; height: 2px; background-color: var(--ink); margin-top: 4px; }
+        .tab:not(.active) .tab-underline { visibility: hidden; }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="screen-body">
+            <div class="section-header">Diário alimentar</div>
+            <div class="subtitle">12 refeições no período · 6.780 kcal</div>
+
+            <div class="stat-row">
+                <div class="stat-card">
+                    <div class="stat-label">Registros</div>
+                    <div class="stat-value">12</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Média kcal</div>
+                    <div class="stat-value green">565</div>
+                </div>
+            </div>
+
+            <div class="chips-row">
+                <div class="chip">HOJE</div>
+                <div class="chip selected">7 DIAS</div>
+                <div class="chip">30 DIAS</div>
+                <div class="chip">TUDO</div>
+            </div>
+            <div class="chips-row">
+                <div class="chip selected">TODOS</div>
+                <div class="chip">Café</div>
+                <div class="chip">Almoço</div>
+                <div class="chip">Jantar</div>
+                <div class="chip">Lanche</div>
+                <div class="chip">Outro</div>
+            </div>
+
+            <div class="day-header">
+                <span class="day-label">Hoje</span>
+                <span class="day-stats">3 ref · 1.510 kcal</span>
+            </div>
+
+            <!-- Registro com foto + pin -->
+            <div class="nb-card">
+                <div class="diary-row">
+                    <div class="meal-thumb"><span class="ms">restaurant</span></div>
+                    <div class="diary-info">
+                        <span class="meal-time">12:40</span>
+                        <div class="meal-name">Frango grelhado</div>
+                        <div class="meal-kcal">520 kcal</div>
+                        <div class="meal-macros">P:42g · C:30g · G:18g · IA</div>
+                    </div>
+                </div>
+                <div class="diary-actions">
+                    <div class="icon-btn pinned"><span class="ms">check</span></div>
+                    <div class="icon-btn"><span class="ms">close</span></div>
+                </div>
+            </div>
+
+            <!-- Registro fixado -->
+            <div class="nb-card">
+                <div class="diary-row">
+                    <div class="meal-thumb"><span class="ms">local_dining</span></div>
+                    <div class="diary-info">
+                        <span class="meal-time">08:15</span>
+                        <div class="meal-name">Omelete de queijo</div>
+                        <div class="meal-kcal">380 kcal</div>
+                        <div class="meal-macros">P:24g · C:6g · G:28g · FIXADO</div>
+                    </div>
+                </div>
+                <div class="diary-actions">
+                    <div class="icon-btn"><span class="ms fill">push_pin</span></div>
+                    <div class="icon-btn"><span class="ms">close</span></div>
+                </div>
+            </div>
+
+            <!-- Terceiro registro de hoje -->
+            <div class="nb-card">
+                <div class="diary-row">
+                    <div class="meal-thumb"><span class="ms">ramen_dining</span></div>
+                    <div class="diary-info">
+                        <span class="meal-time">19:30</span>
+                        <div class="meal-name">Macarrão integral</div>
+                        <div class="meal-kcal">610 kcal</div>
+                        <div class="meal-macros">P:22g · C:82g · G:16g · MANUAL</div>
+                    </div>
+                </div>
+                <div class="diary-actions">
+                    <div class="icon-btn"><span class="ms fill">push_pin</span></div>
+                    <div class="icon-btn"><span class="ms">close</span></div>
+                </div>
+            </div>
+
+            <div class="day-header">
+                <span class="day-label">05/11</span>
+                <span class="day-stats">1 ref · 320 kcal</span>
+            </div>
+
+            <div class="nb-card">
+                <div class="diary-row">
+                    <div class="meal-thumb"><span class="ms">set_meal</span></div>
+                    <div class="diary-info">
+                        <span class="meal-time">12:30</span>
+                        <div class="meal-name">Salada de atum</div>
+                        <div class="meal-kcal">320 kcal</div>
+                        <div class="meal-macros">P:28g · C:12g · G:16g · IA</div>
+                    </div>
+                </div>
+                <div class="diary-actions">
+                    <div class="icon-btn"><span class="ms fill">push_pin</span></div>
+                    <div class="icon-btn"><span class="ms">close</span></div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="tab-bar">
+            <a class="tab" href="HomeScreen.html"><span class="ms">home</span><span class="tab-label">Início</span><span class="tab-underline"></span></a>
+            <a class="tab active" href="DiaryScreen.html"><span class="ms">description</span><span class="tab-label">Diário</span><span class="tab-underline"></span></a>
+            <a class="tab" href="ProgressScreen.html"><span class="ms">monitoring</span><span class="tab-label">Progresso</span><span class="tab-underline"></span></a>
+            <a class="tab" href="ProfileScreen.html"><span class="ms">person</span><span class="tab-label">Perfil</span><span class="tab-underline"></span></a>
+        </nav>
+    </div>
+</body>
+</html>

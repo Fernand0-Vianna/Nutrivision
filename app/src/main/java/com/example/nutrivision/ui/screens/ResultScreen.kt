@@ -35,7 +35,8 @@ fun ResultScreen(
     repository: RecordRepository,
     record: FoodRecord,
     onBack: () -> Unit,
-    onSaved: () -> Unit
+    onSaved: () -> Unit,
+    onCustomize: () -> Unit
 ) {
     var mealName by remember { mutableStateOf(record.mealName.ifEmpty { "Refeição" }) }
     var mealType by remember { mutableStateOf(record.mealType) }
@@ -254,7 +255,7 @@ fun ResultScreen(
         }
         Spacer(modifier = Modifier.height(10.dp))
         NbButtonSecondary(
-            text = if (isPinned) "Prato fixado ✓" else "Fixar prato 📌",
+            text = if (isPinned) "Prato fixado ✓" else "Fixar prato",
             enabled = canSave,
             containerColor = if (isPinned) Lime else Bone,
             onClick = {
@@ -273,6 +274,12 @@ fun ResultScreen(
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             color = Muted
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        NbButtonSecondary(
+            text = "Personalizar prato",
+            onClick = onCustomize,
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(10.dp))
         NbButtonSecondary(

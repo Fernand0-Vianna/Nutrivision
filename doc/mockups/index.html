@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision — Telas do Design System</title>
+    <style>
+        :root {
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+            --surface-dark: #2A322D;
+
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 40px 24px;
+            background-color: var(--bone);
+            font-family: var(--font-inter);
+            color: var(--ink);
+        }
+
+        header.page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-family: var(--font-archivo);
+            font-weight: 800;
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            margin: 0;
+        }
+
+        .page-header p {
+            color: var(--secondary);
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .screen {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .screen-title {
+            font-family: var(--font-archivo);
+            font-weight: 800;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .screen-title .num {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            background-color: var(--lime);
+            border: 2px solid var(--ink);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            box-shadow: 2px 2px 0 var(--ink);
+        }
+
+        .screen-title .open-link {
+            font-size: 11px;
+            color: var(--primary-ink);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .screen-title .open-link:hover { text-decoration: underline; }
+
+        iframe {
+            width: 100%;
+            height: 760px;
+            border: 3px solid var(--ink);
+            border-radius: 4px;
+            box-shadow: 6px 4px 0 var(--ink);
+            background-color: var(--bone);
+        }
+
+        .footer-note {
+            max-width: 1500px;
+            margin: 48px auto 0;
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>Nutrivision</h1>
+        <p>Design system neobrutalista híbrido — 11 telas</p>
+        <a href="Nutrivision.html" style="display:inline-block;margin-top:16px;background:#17B26A;color:#0E7A45;border:3px solid #0B0F0D;border-radius:4px;padding:12px 22px;font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;letter-spacing:.5px;text-transform:uppercase;text-decoration:none;box-shadow:6px 4px 0 #0B0F0D;">Abrir protótipo navegável (SPA) <span class="ms">arrow_forward</span></a>
+    </header>
+
+    <div class="grid">
+        <div class="screen">
+            <div class="screen-title"><span>00 · Abertura</span><span class="num">Splash</span></div>
+            <iframe src="SplashScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>01 · Login</span><span class="num">LoginScreen</span></div>
+            <iframe src="LoginScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>02 · Onboarding</span><span class="num">Onboarding</span></div>
+            <iframe src="OnboardingScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>03 · Home</span><span class="num">HomeScreen</span></div>
+            <iframe src="HomeScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>04 · Scan</span><span class="num">ScanScreen</span></div>
+            <iframe src="ScanScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>05 · Resultado</span><span class="num">ResultScreen</span></div>
+            <iframe src="ResultScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>06 · Análise</span><span class="num">AnalysisScreen</span></div>
+            <iframe src="AnalysisScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>07 · Diário</span><span class="num">DiaryScreen</span></div>
+            <iframe src="DiaryScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>08 · Progresso</span><span class="num">ProgressScreen</span></div>
+            <iframe src="ProgressScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>09 · Perfil</span><span class="num">ProfileScreen</span></div>
+            <iframe src="ProfileScreen.html" loading="lazy"></iframe>
+        </div>
+        <div class="screen">
+            <div class="screen-title"><span>10 · Personalizar prato</span><span class="num">CustomMeal</span></div>
+            <iframe src="CustomMealScreen.html" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <p class="footer-note">
+        Paleta: Primary #17B26A · Lime #C9F73D · Ink #0B0F0D · Bone #F5F3E9 — Bordas 3px · Cantos 4px · Sombra dura 6/4 sem blur
+    </p>
+</body>
+</html>

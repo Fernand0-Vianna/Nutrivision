@@ -30,6 +30,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import com.example.nutrivision.ui.theme.*
@@ -167,10 +171,10 @@ fun BottomTabBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val tabs = listOf(
-            TabItem("INÍCIO", com.example.nutrivision.ui.screens.Screen.Home),
-            TabItem("DIÁRIO", com.example.nutrivision.ui.screens.Screen.Diary),
-            TabItem("PROGRESSO", com.example.nutrivision.ui.screens.Screen.Progress),
-            TabItem("PERFIL", com.example.nutrivision.ui.screens.Screen.Profile)
+            TabItem("INÍCIO", com.example.nutrivision.ui.screens.Screen.Home, Icons.Filled.Home),
+            TabItem("DIÁRIO", com.example.nutrivision.ui.screens.Screen.Diary, Icons.Filled.Description),
+            TabItem("PROGRESSO", com.example.nutrivision.ui.screens.Screen.Progress, Icons.Filled.BarChart),
+            TabItem("PERFIL", com.example.nutrivision.ui.screens.Screen.Profile, Icons.Filled.Person)
         )
         tabs.forEachIndexed { index, item ->
             Column(
@@ -181,6 +185,13 @@ fun BottomTabBar(
                     .fillMaxHeight()
                     .clickable(enabled = onNavigate != null) { onNavigate?.invoke(item.screen) }
             ) {
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = item.label,
+                    tint = Ink,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = item.label,
                     fontWeight = if (index == selected) FontWeight.ExtraBold else FontWeight.Bold,
@@ -189,7 +200,7 @@ fun BottomTabBar(
                     letterSpacing = 1.1.sp
                 )
                 if (index == selected) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Box(modifier = Modifier.width(24.dp).height(2.dp).background(Ink))
                 }
             }
@@ -197,7 +208,11 @@ fun BottomTabBar(
     }
 }
 
-data class TabItem(val label: String, val screen: com.example.nutrivision.ui.screens.Screen)
+data class TabItem(
+    val label: String,
+    val screen: com.example.nutrivision.ui.screens.Screen,
+    val icon: ImageVector
+)
 
 @Composable
 fun NbSectionHeader(
@@ -307,12 +322,15 @@ fun NbStatCard(
 
 @Composable
 fun NbIconButton(
-    label: String,
+    label: String = "",
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = Card,
     size: Dp = 44.dp,
-    contentDescription: String? = null
+    contentDescription: String? = null,
+    icon: ImageVector? = null,
+    iconTint: Color = Ink,
+    iconSize: Dp = 22.dp
 ) {
     Box(
         modifier = modifier
@@ -330,18 +348,25 @@ fun NbIconButton(
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = label, fontWeight = FontWeight.ExtraBold, color = Ink, fontSize = 16.sp)
+        if (icon != null) {
+            Icon(imageVector = icon, contentDescription = contentDescription, tint = iconTint, modifier = Modifier.size(iconSize))
+        } else {
+            Text(text = label, fontWeight = FontWeight.ExtraBold, color = Ink, fontSize = 16.sp)
+        }
     }
 }
 
 @Composable
 fun NbMiniIconButton(
-    label: String,
+    label: String = "",
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = Card,
     size: Dp = 28.dp,
-    contentDescription: String? = null
+    contentDescription: String? = null,
+    icon: ImageVector? = null,
+    iconTint: Color = Ink,
+    iconSize: Dp = 18.dp
 ) {
     Box(
         modifier = modifier
@@ -359,6 +384,10 @@ fun NbMiniIconButton(
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = label, fontWeight = FontWeight.ExtraBold, color = Ink, fontSize = 13.sp)
+        if (icon != null) {
+            Icon(imageVector = icon, contentDescription = contentDescription, tint = iconTint, modifier = Modifier.size(iconSize))
+        } else {
+            Text(text = label, fontWeight = FontWeight.ExtraBold, color = Ink, fontSize = 13.sp)
+        }
     }
 }

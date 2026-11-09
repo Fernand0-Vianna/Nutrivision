@@ -23,6 +23,8 @@ Tudo salvo no aparelho, sem conta e sem internet obrigatória.
 
 **Pratos fixados.** Marque um prato favorito e adicione ao dia em um toque, sem escanear de novo.
 
+**Personalizar prato.** Monte um prato com nome, refeição e macros, veja a prévia e salve no diário ou guarde na tela inicial para reutilizar.
+
 **Perfil.** Metas diárias, nome e dados físicos, objetivo, nível de atividade, intolerâncias, alergias e condições de saúde. O app usa isso para gerar avisos personalizados ("Atenção para você") no resultado do scan.
 
 ## Privacidade e dados
@@ -64,21 +66,28 @@ No Xiaomi/MIUI, ative em Opções do desenvolvedor: **Instalar via USB** e **Dep
 
 <table>
   <tr>
+    <td align="center"><img src="doc/screens/00-abertura.png" width="220"><br><sub><b>Abertura</b></sub></td>
     <td align="center"><img src="doc/screens/01-login.png" width="220"><br><sub><b>Login</b></sub></td>
     <td align="center"><img src="doc/screens/02-onboarding.png" width="220"><br><sub><b>Onboarding</b></sub></td>
-    <td align="center"><img src="doc/screens/03-home.png" width="220"><br><sub><b>Home</b></sub></td>
   </tr>
   <tr>
+    <td align="center"><img src="doc/screens/03-home.png" width="220"><br><sub><b>Home</b></sub></td>
     <td align="center"><img src="doc/screens/04-scan.png" width="220"><br><sub><b>Scan</b></sub></td>
     <td align="center"><img src="doc/screens/05-resultado.png" width="220"><br><sub><b>Resultado</b></sub></td>
-    <td align="center"><img src="doc/screens/06-analise.png" width="220"><br><sub><b>Análise</b></sub></td>
   </tr>
   <tr>
+    <td align="center"><img src="doc/screens/06-analise.png" width="220"><br><sub><b>Análise</b></sub></td>
     <td align="center"><img src="doc/screens/07-diario.png" width="220"><br><sub><b>Diário</b></sub></td>
     <td align="center"><img src="doc/screens/08-progresso.png" width="220"><br><sub><b>Progresso</b></sub></td>
+  </tr>
+  <tr>
     <td align="center"><img src="doc/screens/09-perfil.png" width="220"><br><sub><b>Perfil</b></sub></td>
+    <td align="center"><img src="doc/screens/10-personalizar-prato.png" width="220"><br><sub><b>Personalizar prato</b></sub></td>
+    <td></td>
   </tr>
 </table>
+
+> Protótipo navegável (HTML): [`doc/mockups/index.html`](doc/mockups/index.html)
 
 ---
 

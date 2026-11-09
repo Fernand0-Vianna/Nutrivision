@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Onboarding</title>
+    <style>
+        :root {
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+            --stroke: #D6D3C4;
+            --danger: #E2402C;
+            --danger-ink: #C2321D;
+            --warning-ink: #B45309;
+
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 24px 0; background-color: #2A322D;
+            font-family: var(--font-inter); color: var(--ink);
+            display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 100%; max-width: 400px; background-color: var(--bone);
+            border: 3px solid var(--ink); border-radius: 8px;
+            box-shadow: 6px 4px 0 rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
+        }
+
+        .screen-body { padding: 32px 20px; }
+
+        .ob-title {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 20px;
+            color: var(--ink); text-transform: uppercase; letter-spacing: -0.3px;
+            text-align: center; margin: 0;
+        }
+        .step-indicator {
+            font-size: 12px; font-weight: 700; color: var(--secondary);
+            text-align: center; margin-top: 4px;
+        }
+
+        /* Step progress dots */
+        .dots { display: flex; gap: 6px; justify-content: center; margin: 16px 0 4px; }
+        .dot { width: 28px; height: 6px; background-color: var(--elevated); border: 1.5px solid var(--ink); border-radius: 2px; }
+        .dot.active { background-color: var(--lime); }
+
+        .step-section { display: none; }
+        .step-section.active { display: block; }
+
+        .section-title {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            color: var(--ink); text-transform: uppercase; letter-spacing: -0.3px;
+            margin: 20px 0 16px;
+        }
+
+        .row2 { display: flex; gap: 12px; }
+        .field { flex: 1; margin-bottom: 14px; }
+        .field label { display: block; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+        .field input, .field select {
+            width: 100%; padding: 12px; background-color: var(--white);
+            border: 2px solid var(--stroke); border-radius: 4px;
+            font-family: var(--font-inter); font-weight: 700; font-size: 13px; color: var(--ink);
+        }
+        .field input:focus, .field select:focus { border-color: var(--ink); outline: none; }
+        .field.error input, .field.error select { border-color: var(--danger); }
+        .field .msg { font-size: 11px; color: var(--danger-ink); margin-top: 4px; display: none; }
+        .field.error .msg { display: block; }
+
+        .radio-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .radio-option {
+            flex: 1; min-width: 88px; text-align: center; padding: 12px 8px;
+            background-color: var(--white); border: 3px solid var(--ink); border-radius: 4px;
+            font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .radio-option.selected { background-color: var(--lime); box-shadow: 3px 2px 0 var(--ink); }
+
+        .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .chip-option {
+            background-color: var(--white); border: 3px solid var(--ink); border-radius: 4px;
+            padding: 8px 14px; font-weight: 800; font-size: 11px; text-transform: uppercase;
+            letter-spacing: 0.5px; cursor: pointer;
+        }
+        .chip-option.selected { background-color: var(--lime); box-shadow: 3px 2px 0 var(--ink); }
+
+        /* BMI live */
+        .bmi-box {
+            background-color: var(--elevated); border: 2px solid var(--ink);
+            border-radius: 4px; padding: 16px; text-align: center; margin-bottom: 8px;
+        }
+        .bmi-box .bl { font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 1.1px; }
+        .bmi-box .bv { font-family: var(--font-mono); font-weight: 700; font-size: 28px; color: var(--primary-ink); margin-top: 4px; }
+        .bmi-box .bc { font-size: 12px; color: var(--secondary); margin-top: 4px; }
+
+        /* Summary */
+        .summary-item {
+            background-color: var(--white); border: 3px solid var(--ink);
+            border-radius: 4px; box-shadow: 6px 4px 0 var(--ink);
+            padding: 14px; margin-bottom: 10px;
+        }
+        .summary-item .sl { font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 1.1px; }
+        .summary-item .sv { font-family: var(--font-mono); font-weight: 700; font-size: 15px; color: var(--ink); margin-top: 4px; }
+
+        /* Nav */
+        .onboarding-nav { display: flex; gap: 12px; margin-top: 24px; }
+        .btn-primary {
+            flex: 1; background-color: var(--primary); color: var(--primary-ink);
+            border: 3px solid var(--ink); border-radius: 4px; height: 56px;
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 6px 4px 0 var(--ink);
+        }
+        .btn-secondary {
+            flex: 1; background-color: var(--bone); color: var(--ink);
+            border: 3px solid var(--ink); border-radius: 4px; height: 56px;
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 6px 4px 0 var(--ink);
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="screen-body">
+            <h1 class="ob-title">Nutrivision</h1>
+            <div class="step-indicator" id="step-indicator">Passo 1 de 4 • Dados pessoais</div>
+            <div class="dots">
+                <div class="dot active" data-dot="1"></div>
+                <div class="dot" data-dot="2"></div>
+                <div class="dot" data-dot="3"></div>
+                <div class="dot" data-dot="4"></div>
+            </div>
+
+            <!-- Passo 1 -->
+            <section class="step-section active" id="step-1">
+                <div class="section-title">Seus dados</div>
+                <div class="field">
+                    <label>Nome completo</label>
+                    <input type="text" id="name" value="Fernando Santos Viana" placeholder="Fernando Santos Viana">
+                    <span class="msg">Nome é obrigatório</span>
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label>Idade</label>
+                        <input type="number" id="age" min="10" max="120" value="28" placeholder="28">
+                        <span class="msg">Idade entre 10 e 120</span>
+                    </div>
+                    <div class="field">
+                        <label>Sexo</label>
+                        <select id="gender">
+                            <option value="">Selecione</option>
+                            <option value="M" selected>Masculino</option>
+                            <option value="F">Feminino</option>
+                            <option value="O">Outro</option>
+                        </select>
+                        <span class="msg">Selecione o sexo</span>
+                    </div>
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="height" min="100" max="250" value="175" placeholder="175" oninput="calculateBMI()">
+                        <span class="msg">Entre 100 e 250 cm</span>
+                    </div>
+                    <div class="field">
+                        <label>Peso (kg)</label>
+                        <input type="number" id="weight" min="30" max="350" value="75" placeholder="75" oninput="calculateBMI()">
+                        <span class="msg">Entre 30 e 350 kg</span>
+                    </div>
+                </div>
+                <div class="bmi-box">
+                    <div class="bl">Seu IMC</div>
+                    <div class="bv" id="bmi-value">--</div>
+                    <div class="bc" id="bmi-class">Insira altura e peso</div>
+                </div>
+            </section>
+
+            <!-- Passo 2 -->
+            <section class="step-section" id="step-2">
+                <div class="section-title">Objetivo e atividade</div>
+                <div class="field" style="margin-bottom:6px;"><label>Qual seu objetivo?</label></div>
+                <div class="radio-group" id="goal-group">
+                    <div class="radio-option selected" data-value="PERDA_PESO">Perda de peso</div>
+                    <div class="radio-option" data-value="MANUTENCAO">Manutenção</div>
+                    <div class="radio-option" data-value="GANHO_MASSA">Ganho de massa</div>
+                </div>
+                <div class="field" style="margin-bottom:6px;"><label>Nível de atividade</label></div>
+                <div class="radio-group" id="activity-group">
+                    <div class="radio-option selected" data-value="SEDENTARIO">Sedentário</div>
+                    <div class="radio-option" data-value="LEVE">Leve</div>
+                    <div class="radio-option" data-value="MODERADO">Moderado</div>
+                    <div class="radio-option" data-value="INTENSO">Intenso</div>
+                    <div class="radio-option" data-value="MUITO_INTENSO">Muito intenso</div>
+                </div>
+            </section>
+
+            <!-- Passo 3 -->
+            <section class="step-section" id="step-3">
+                <div class="section-title">Restrições e saúde</div>
+                <div class="field" style="margin-bottom:6px;"><label>Intolerâncias</label></div>
+                <div class="chip-group" id="intolerances">
+                    <div class="chip-option" data-value="Leite e derivados">Leite e derivados</div>
+                    <div class="chip-option" data-value="Glúten">Glúten</div>
+                    <div class="chip-option" data-value="Ovos">Ovos</div>
+                    <div class="chip-option" data-value="Soja">Soja</div>
+                    <div class="chip-option" data-value="Frutos do mar">Frutos do mar</div>
+                    <div class="chip-option" data-value="Outros">Outros</div>
+                </div>
+                <div class="field" style="margin-bottom:6px;"><label>Alergias</label></div>
+                <div class="chip-group" id="allergies">
+                    <div class="chip-option" data-value="Amendoim">Amendoim</div>
+                    <div class="chip-option" data-value="Camarão">Camarão</div>
+                    <div class="chip-option" data-value="Peixe">Peixe</div>
+                    <div class="chip-option" data-value="Nozes">Nozes</div>
+                    <div class="chip-option" data-value="Outras">Outras</div>
+                </div>
+                <div class="field" style="margin-bottom:6px;"><label>Condições de saúde</label></div>
+                <div class="chip-group" id="conditions">
+                    <div class="chip-option" data-value="Diabetes">Diabetes</div>
+                    <div class="chip-option" data-value="Hipertensão">Hipertensão</div>
+                    <div class="chip-option" data-value="Colesterol alto">Colesterol alto</div>
+                    <div class="chip-option" data-value="Gastrite">Gastrite</div>
+                    <div class="chip-option" data-value="Outras">Outras</div>
+                </div>
+            </section>
+
+            <!-- Passo 4 -->
+            <section class="step-section" id="step-4">
+                <div class="section-title">Resumo</div>
+                <div class="summary-item"><div class="sl">Nome</div><div class="sv" id="s-name">-</div></div>
+                <div class="summary-item"><div class="sl">Idade / Sexo</div><div class="sv" id="s-age-gender">-</div></div>
+                <div class="summary-item"><div class="sl">Altura / Peso</div><div class="sv" id="s-height-weight">-</div></div>
+                <div class="summary-item"><div class="sl">IMC</div><div class="sv" id="s-bmi">-</div></div>
+                <div class="summary-item"><div class="sl">Objetivo</div><div class="sv" id="s-goal">-</div></div>
+                <div class="summary-item"><div class="sl">Atividade</div><div class="sv" id="s-activity">-</div></div>
+                <div class="summary-item"><div class="sl">Intolerâncias</div><div class="sv" id="s-intolerances">Nenhuma</div></div>
+                <div class="summary-item"><div class="sl">Alergias</div><div class="sv" id="s-allergies">Nenhuma</div></div>
+                <div class="summary-item"><div class="sl">Condições</div><div class="sv" id="s-conditions">Nenhuma</div></div>
+            </section>
+
+            <nav class="onboarding-nav">
+                <button class="btn-secondary" id="btn-prev" onclick="prevStep()" style="display:none;">Voltar</button>
+                <button class="btn-primary" id="btn-next" onclick="nextStep()">Próximo</button>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const formData = { name:'', age:'', gender:'', height:'', weight:'', goal:'PERDA_PESO', activity:'SEDENTARIO', intolerances:[], allergies:[], conditions:[] };
+
+        function updateStepIndicator() {
+            const texts = [
+                'Passo 1 de 4 • Dados pessoais',
+                'Passo 2 de 4 • Objetivo e atividade',
+                'Passo 3 de 4 • Restrições e saúde',
+                'Passo 4 de 4 • Resumo e confirmação'
+            ];
+            document.getElementById('step-indicator').textContent = texts[currentStep - 1];
+            document.querySelectorAll('.dot').forEach(d => {
+                d.classList.toggle('active', parseInt(d.dataset.dot) <= currentStep);
+            });
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + step).classList.add('active');
+            updateStepIndicator();
+            document.getElementById('btn-prev').style.display = step > 1 ? 'block' : 'none';
+            const btnNext = document.getElementById('btn-next');
+            if (step === totalSteps) {
+                btnNext.textContent = 'Confirmar';
+                btnNext.onclick = finishOnboarding;
+                updateSummary();
+            } else {
+                btnNext.textContent = 'Próximo';
+                btnNext.onclick = nextStep;
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function nextStep() {
+            if (!validateCurrentStep()) return;
+            if (currentStep < totalSteps) { currentStep++; showStep(currentStep); }
+        }
+        function prevStep() { if (currentStep > 1) { currentStep--; showStep(currentStep); } }
+
+        function validateCurrentStep() {
+            let ok = true;
+            if (currentStep === 1) {
+                const rules = { name: v => v.trim().length > 0, age: v => v >= 10 && v <= 120, gender: v => v !== '', height: v => v >= 100 && v <= 250, weight: v => v >= 30 && v <= 350 };
+                ['name','age','gender','height','weight'].forEach(f => {
+                    const input = document.getElementById(f);
+                    const field = input.closest('.field');
+                    if (!rules[f](input.value)) { field.classList.add('error'); ok = false; }
+                    else { field.classList.remove('error'); formData[f] = input.value; }
+                });
+            } else if (currentStep === 2) {
+                formData.goal = document.querySelector('#goal-group .radio-option.selected').dataset.value;
+                formData.activity = document.querySelector('#activity-group .radio-option.selected').dataset.value;
+            } else if (currentStep === 3) {
+                formData.intolerances = Array.from(document.querySelectorAll('#intolerances .chip-option.selected')).map(c => c.dataset.value);
+                formData.allergies = Array.from(document.querySelectorAll('#allergies .chip-option.selected')).map(c => c.dataset.value);
+                formData.conditions = Array.from(document.querySelectorAll('#conditions .chip-option.selected')).map(c => c.dataset.value);
+            }
+            return ok;
+        }
+
+        function calculateBMI() {
+            const h = parseFloat(document.getElementById('height').value);
+            const w = parseFloat(document.getElementById('weight').value);
+            const bv = document.getElementById('bmi-value');
+            const bc = document.getElementById('bmi-class');
+            if (h && w) {
+                const bmi = w / Math.pow(h / 100, 2);
+                bv.textContent = bmi.toFixed(1);
+                if (bmi < 18.5) { bc.textContent = 'Abaixo do peso'; bv.style.color = '#B45309'; }
+                else if (bmi < 25) { bc.textContent = 'Peso normal'; bv.style.color = '#0E7A45'; }
+                else if (bmi < 30) { bc.textContent = 'Sobrepeso'; bv.style.color = '#B45309'; }
+                else { bc.textContent = 'Obesidade'; bv.style.color = '#C2321D'; }
+            } else {
+                bv.textContent = '--'; bc.textContent = 'Insira altura e peso'; bv.style.color = '#0E7A45';
+            }
+        }
+
+        function updateSummary() {
+            const genderLabels = { M:'Masculino', F:'Feminino', O:'Outro' };
+            const goalLabels = { PERDA_PESO:'Perda de peso', MANUTENCAO:'Manutenção', GANHO_MASSA:'Ganho de massa' };
+            const activityLabels = { SEDENTARIO:'Sedentário', LEVE:'Leve', MODERADO:'Moderado', INTENSO:'Intenso', MUITO_INTENSO:'Muito intenso' };
+            document.getElementById('s-name').textContent = formData.name;
+            document.getElementById('s-age-gender').textContent = formData.age + ' anos • ' + genderLabels[formData.gender];
+            document.getElementById('s-height-weight').textContent = formData.height + ' cm • ' + formData.weight + ' kg';
+            document.getElementById('s-bmi').textContent = document.getElementById('bmi-value').textContent + ' (' + document.getElementById('bmi-class').textContent + ')';
+            document.getElementById('s-goal').textContent = goalLabels[formData.goal];
+            document.getElementById('s-activity').textContent = activityLabels[formData.activity];
+            document.getElementById('s-intolerances').textContent = formData.intolerances.length ? formData.intolerances.join(', ') : 'Nenhuma';
+            document.getElementById('s-allergies').textContent = formData.allergies.length ? formData.allergies.join(', ') : 'Nenhuma';
+            document.getElementById('s-conditions').textContent = formData.conditions.length ? formData.conditions.join(', ') : 'Nenhuma';
+        }
+
+        function finishOnboarding() {
+            if (!validateCurrentStep()) return;
+            window.location.href = 'HomeScreen.html';
+        }
+
+        document.querySelectorAll('.radio-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                opt.closest('.radio-group').querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+            });
+        });
+        document.querySelectorAll('.chip-option').forEach(opt => {
+            opt.addEventListener('click', () => opt.classList.toggle('selected'));
+        });
+
+        updateStepIndicator();
+        calculateBMI();
+    </script>
+</body>
+</html>

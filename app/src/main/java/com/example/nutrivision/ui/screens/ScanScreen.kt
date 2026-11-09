@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -170,7 +173,7 @@ fun ScanScreen(
                     .clickable(enabled = !loading, onClick = onBack),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "×", color = Bone, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Icon(imageVector = Icons.Filled.Close, contentDescription = "Fechar scan", tint = Bone, modifier = Modifier.size(24.dp))
             }
             Text(
                 text = "NOVO SCAN",

@@ -251,6 +251,43 @@ class RecordRepository(private val context: Context) {
         deleteScanImageIfUnused(removed?.imagePath)
     }
 
+    /**
+     * Salva (ou atualiza) um prato personalizado. Diferente de [togglePinned],
+     * sempre deixa o prato salvo — é o botão "salvar" da tela de personalização.
+     */
+    @Synchronized
+    fun saveCustomPinnedMeal(
+        name: String,
+        calories: Double,
+        protein: Double,
+        carbs: Double,
+        fat: Double,
+        mealType: String = "",
+        imagePath: String? = null
+    ): PinnedMeal {
+        val current = loadPinnedMeals().toMutableList()
+        val existing = current.firstOrNull { it.matches(name, calories) }
+        val meal = existing?.copy(
+            protein = protein,
+            carbs = carbs,
+            fat = fat,
+            mealType = mealType,
+            imagePath = imagePath ?: existing.imagePath
+        ) ?: PinnedMeal(
+            name = name.trim().ifBlank { "Refeição" },
+            calories = calories,
+            protein = protein,
+            carbs = carbs,
+            fat = fat,
+            mealType = mealType,
+            imagePath = imagePath
+        )
+        current.removeAll { it.matches(name, calories) }
+        current.add(0, meal)
+        writeAtomic(pinnedFile, gson.toJson(current))
+        return meal
+    }
+
     /** Adiciona um prato fixado ao diário de hoje e devolve o registro criado. */
     fun addPinnedToToday(id: String): FoodRecord? {
         val meal = loadPinnedMeals().firstOrNull { it.id == id } ?: return null

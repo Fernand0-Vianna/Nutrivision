@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -275,8 +279,8 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     NbIconButton(
-                        label = if (showKey) "OC" else "VER",
                         onClick = { showKey = !showKey },
+                        icon = if (showKey) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         contentDescription = if (showKey) "Ocultar chave Gemini" else "Mostrar chave Gemini"
                     )
                     NbButtonPrimary(
@@ -346,8 +350,8 @@ fun ProfileScreen(
                         contentDescription = "Adicionar 500 ml de água"
                     )
                     NbIconButton(
-                        label = "↺",
                         onClick = { repository.resetWater(); water = 0.0 },
+                        icon = Icons.Filled.Refresh,
                         contentDescription = "Zerar água do dia"
                     )
                 }

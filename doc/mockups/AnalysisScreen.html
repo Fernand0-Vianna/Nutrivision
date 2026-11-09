@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Análise nutricional</title>
+    <style>
+        :root {
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+            --danger: #E2402C;
+            --danger-ink: #C2321D;
+            --protein-fill: #7C3AED;
+            --carbs-fill: #FF6B2C;
+            --fat-fill: #F5B301;
+
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 24px 0; background-color: #2A322D;
+            font-family: var(--font-inter); color: var(--ink);
+            display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 100%; max-width: 400px; background-color: var(--bone);
+            border: 3px solid var(--ink); border-radius: 8px;
+            box-shadow: 6px 4px 0 rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
+        }
+
+        .screen-body { padding: 32px 16px; }
+
+        .section-header {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            color: var(--ink); text-transform: uppercase; letter-spacing: -0.3px;
+        }
+
+        .stat-row { display: flex; gap: 8px; margin-top: 16px; }
+        .stat-card {
+            flex: 1; background-color: var(--white); border: 3px solid var(--ink);
+            border-radius: 4px; box-shadow: 6px 4px 0 var(--ink); padding: 16px;
+        }
+        .stat-card .sl { font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 1.1px; }
+        .stat-card .sv { font-family: var(--font-mono); font-weight: 700; font-size: 28px; color: var(--ink); margin-top: 4px; }
+        .stat-card .sv.green { color: var(--primary-ink); }
+
+        .nb-card {
+            background-color: var(--white); border: 3px solid var(--ink);
+            border-radius: 4px; box-shadow: 6px 4px 0 var(--ink);
+            padding: 16px; margin-top: 12px;
+        }
+
+        .card-title {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            color: var(--ink); text-transform: uppercase; letter-spacing: -0.3px;
+        }
+
+        .insight-text { font-weight: 500; color: var(--secondary); margin-top: 8px; line-height: 1.5; font-size: 14px; }
+
+        .balance-row { margin-top: 12px; }
+        .balance-top { display: flex; justify-content: space-between; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.1px; }
+        .balance-top .bl { color: var(--ink); }
+        .balance-top .bv { color: var(--secondary); font-family: var(--font-mono); }
+        .balance-top .bv.over { color: var(--danger-ink); }
+
+        .progress-track {
+            width: 100%; height: 14px; background-color: var(--elevated);
+            border: 2px solid var(--ink); border-radius: 4px; overflow: hidden; margin-top: 6px;
+        }
+        .progress-fill { height: 100%; }
+        .fill-primary { background-color: var(--primary); }
+        .fill-protein { background-color: var(--protein-fill); }
+        .fill-carbs { background-color: var(--carbs-fill); }
+        .fill-fat { background-color: var(--fat-fill); }
+        .fill-danger { background-color: var(--danger); }
+
+        .btn-primary {
+            width: 100%; background-color: var(--primary); color: var(--primary-ink);
+            border: 3px solid var(--ink); border-radius: 4px; height: 56px;
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 6px 4px 0 var(--ink); margin-top: 24px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="screen-body">
+            <div class="section-header">Análise nutricional</div>
+
+            <div class="stat-row">
+                <div class="stat-card">
+                    <div class="sl">Registros</div>
+                    <div class="sv">3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="sl">Média kcal</div>
+                    <div class="sv green">503.3</div>
+                </div>
+            </div>
+
+            <div class="nb-card">
+                <div class="card-title">Insight nutricional</div>
+                <p class="insight-text">Balanço equilibrado de macros. Continue registrando para manter a consistência.</p>
+            </div>
+
+            <div class="nb-card">
+                <div class="card-title">Balanço vs metas</div>
+
+                <div class="balance-row">
+                    <div class="balance-top"><span class="bl">Calorias</span><span class="bv">1510 / 2500</span></div>
+                    <div class="progress-track"><div class="progress-fill fill-primary" style="width:60%"></div></div>
+                </div>
+
+                <div class="balance-row">
+                    <div class="balance-top"><span class="bl">Proteína</span><span class="bv">88 / 90</span></div>
+                    <div class="progress-track"><div class="progress-fill fill-protein" style="width:98%"></div></div>
+                </div>
+
+                <div class="balance-row">
+                    <div class="balance-top"><span class="bl">Carboidrato</span><span class="bv">118 / 250</span></div>
+                    <div class="progress-track"><div class="progress-fill fill-carbs" style="width:47%"></div></div>
+                </div>
+
+                <div class="balance-row">
+                    <div class="balance-top"><span class="bl">Gordura</span><span class="bv">62 / 70</span></div>
+                    <div class="progress-track"><div class="progress-fill fill-fat" style="width:89%"></div></div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="window.location.href='HomeScreen.html'">Voltar</button>
+        </div>
+    </div>
+</body>
+</html>

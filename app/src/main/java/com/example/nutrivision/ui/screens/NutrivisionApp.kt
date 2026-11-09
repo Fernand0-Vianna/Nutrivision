@@ -16,8 +16,14 @@ fun NutrivisionApp() {
     var screen by rememberSaveable {
         mutableStateOf(if (profile.completed && profile.heightCm > 0.0) Screen.Home else Screen.Onboarding)
     }
+    var showSplash by rememberSaveable { mutableStateOf(true) }
     // Resultado do último scan, compartilhado entre Scan → Resultado
     var lastRecord by remember { mutableStateOf<FoodRecord?>(null) }
+
+    if (showSplash) {
+        SplashScreen(onDone = { showSplash = false })
+        return
+    }
 
     BackHandler(enabled = screen != Screen.Home && screen != Screen.Onboarding && screen != Screen.Login) {
         screen = if (screen == Screen.Result) Screen.Scan else Screen.Home
@@ -61,7 +67,8 @@ fun NutrivisionApp() {
             repository = repository,
             record = lastRecord ?: FoodRecord(mealName = "Refeição"),
             onBack = { screen = Screen.Scan },
-            onSaved = { screen = Screen.Analysis }
+            onSaved = { screen = Screen.Analysis },
+            onCustomize = { screen = Screen.CustomMeal }
         )
 
         Screen.Analysis -> AnalysisScreen(
@@ -72,9 +79,15 @@ fun NutrivisionApp() {
         Screen.Diary -> DiaryScreen(repository = repository, onNavigate = { screen = it })
         Screen.Progress -> ProgressScreen(repository = repository, onNavigate = { screen = it })
         Screen.Profile -> ProfileScreen(repository = repository, onNavigate = { screen = it })
+
+        Screen.CustomMeal -> CustomMealScreen(
+            repository = repository,
+            onBack = { screen = Screen.Home },
+            onSaved = { screen = Screen.Diary }
+        )
     }
 }
 
 enum class Screen {
-    Onboarding, Login, Home, Scan, Result, Analysis, Diary, Progress, Profile
+    Onboarding, Login, Home, Scan, Result, Analysis, Diary, Progress, Profile, CustomMeal
 }

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Login</title>
+    <style>
+        :root {
+            /* Design System Colors */
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+
+            /* Typography */
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bone);
+            font-family: var(--font-inter);
+            color: var(--ink);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Moldura de celular para visualização */
+        .phone-frame {
+            width: 100%;
+            max-width: 400px;
+            min-height: 720px;
+            background-color: var(--bone);
+            border: 3px solid var(--ink);
+            border-radius: 8px;
+            box-shadow: 6px 4px 0 var(--ink);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+        }
+
+        /* Logo scan-frame (do logo.svg) */
+        .logo {
+            width: 88px;
+            height: 88px;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .logo .logo-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 72px;
+            height: 72px;
+            background-color: var(--lime);
+            border: 3px solid var(--ink);
+            border-radius: 4px;
+            box-shadow: 4px 4px 0 var(--ink);
+        }
+
+        .logo .logo-frame {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .logo .logo-frame .corner {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 3px solid var(--ink);
+            border-radius: 2px;
+        }
+        .logo .logo-frame .c-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .logo .logo-frame .c-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .logo .logo-frame .c-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+        .logo .logo-frame .c-br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+        .login-title {
+            font-family: var(--font-archivo);
+            font-weight: 800;
+            font-size: 34px;
+            color: var(--ink);
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            margin: 0;
+            text-align: center;
+        }
+
+        .login-tagline {
+            font-family: var(--font-inter);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--secondary);
+            text-align: center;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            line-height: 1.5;
+            margin: 12px 0 0;
+        }
+
+        .login-spacer { height: 48px; }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--primary-ink);
+            border: 3px solid var(--ink);
+            border-radius: 4px;
+            padding: 0;
+            height: 56px;
+            font-family: var(--font-archivo);
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 6px 4px 0 var(--ink);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-ink);
+        }
+
+        .btn-primary:active {
+            transform: translate(3px, 2px);
+            box-shadow: 3px 2px 0 var(--ink);
+        }
+
+        .disclaimer {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            font-size: 11px;
+            color: var(--muted);
+            text-align: center;
+            line-height: 1.5;
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="logo">
+            <div class="logo-bg"></div>
+            <div class="logo-frame">
+                <div class="corner c-tl"></div>
+                <div class="corner c-tr"></div>
+                <div class="corner c-bl"></div>
+                <div class="corner c-br"></div>
+            </div>
+        </div>
+
+        <h1 class="login-title">NUTRIVISION</h1>
+        <p class="login-tagline">Registre suas refeições<br>e veja o que você come</p>
+
+        <div class="login-spacer"></div>
+
+        <button class="btn-primary" onclick="window.location.href='OnboardingScreen.html'">Começar</button>
+
+        <p class="disclaimer">Aviso de saúde: aplicativo de bem-estar. Não substitui avaliação médica ou nutricional.</p>
+    </div>
+</body>
+</html>

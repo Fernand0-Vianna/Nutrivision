@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Resultado do scan</title>
+    <style>
+        :root {
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --mint: #C9EED9;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+            --stroke: #D6D3C4;
+            --warning-ink: #B45309;
+            --danger-ink: #C2321D;
+            --protein-ink: #6D28D9;
+            --carbs-ink: #C2410C;
+            --fat-ink: #A16207;
+
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 24px 0; background-color: #2A322D;
+            font-family: var(--font-inter); color: var(--ink);
+            display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+        }
+
+        .phone-frame {
+            width: 100%; max-width: 400px; background-color: var(--bone);
+            border: 3px solid var(--ink); border-radius: 8px;
+            box-shadow: 6px 4px 0 rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
+        }
+
+        .screen-body { padding: 32px 16px 32px; }
+
+        .section-header {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            color: var(--ink); text-transform: uppercase; letter-spacing: -0.3px;
+        }
+        .section-header + .section-sub {
+            font-size: 13px; font-weight: 700; color: var(--secondary); margin-top: 4px;
+        }
+
+        .sub-header {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            color: var(--ink); text-transform: uppercase; letter-spacing: -0.3px;
+            margin-top: 16px;
+        }
+
+        .photo {
+            width: 100%; height: 180px; background-color: var(--lime);
+            border: 2px solid var(--ink); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 34px; margin-top: 16px;
+        }
+
+        .nb-card {
+            background-color: var(--white); border: 3px solid var(--ink);
+            border-radius: 4px; box-shadow: 6px 4px 0 var(--ink);
+            padding: 16px; margin-top: 12px; position: relative;
+        }
+
+        .source-badge {
+            position: absolute; top: 14px; right: 14px;
+            border: 1px solid var(--ink); border-radius: 4px;
+            padding: 4px 10px; font-size: 10px; font-weight: 800;
+            letter-spacing: 1px; text-transform: uppercase; background-color: var(--elevated);
+        }
+        .source-badge.gemini { background-color: var(--mint); }
+        .source-badge.fixado { background-color: var(--pin-yellow, #FFD43B); }
+
+        .stat-label {
+            font-size: 11px; font-weight: 700; color: var(--secondary);
+            text-transform: uppercase; letter-spacing: 1.1px;
+        }
+        .big-row { display: flex; align-items: baseline; margin-top: 4px; }
+        .big-value { font-family: var(--font-mono); font-weight: 700; font-size: 30px; color: var(--ink); }
+        .big-unit { font-family: var(--font-mono); font-weight: 700; font-size: 13px; color: var(--secondary); margin-left: 6px; }
+
+        .macros-row { display: flex; gap: 8px; margin-top: 12px; }
+        .macro-card {
+            flex: 1; background-color: var(--white); border: 3px solid var(--ink);
+            border-radius: 4px; box-shadow: 6px 4px 0 var(--ink); padding: 12px;
+        }
+        .macro-card .ml { font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .macro-card .mv { font-family: var(--font-mono); font-weight: 700; font-size: 18px; margin-top: 4px; }
+        .macro-card.protein .mv { color: var(--protein-ink); }
+        .macro-card.carbs .mv { color: var(--carbs-ink); }
+        .macro-card.fat .mv { color: var(--fat-ink); }
+
+        /* Alerta de saúde */
+        .alert-card { border-color: var(--ink); }
+        .alert-title { font-weight: 800; color: var(--danger-ink); text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px; }
+        .alert-list { margin: 8px 0 0; padding-left: 16px; }
+        .alert-list li { font-weight: 500; color: var(--secondary); font-size: 12px; margin-bottom: 4px; }
+        .alert-note { font-weight: 500; color: var(--muted); font-size: 11px; margin-top: 8px; }
+
+        .meal-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .chip {
+            background-color: var(--white); border: 3px solid var(--ink);
+            border-radius: 4px; padding: 8px 14px;
+            font-weight: 800; font-size: 11px; text-transform: uppercase;
+            letter-spacing: 0.5px; cursor: pointer;
+        }
+        .chip.selected { background-color: var(--lime); box-shadow: 3px 2px 0 var(--ink); }
+
+        /* Form */
+        .form-note { font-weight: 500; color: var(--secondary); font-size: 12px; margin-top: 4px; }
+        .field { margin-top: 12px; }
+        .field label {
+            display: block; font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px;
+        }
+        .field input {
+            width: 100%; padding: 12px; background-color: var(--white);
+            border: 2px solid var(--stroke); border-radius: 4px;
+            font-family: var(--font-inter); font-weight: 700; font-size: 13px; color: var(--ink);
+        }
+        .field input:focus { border-color: var(--ink); outline: none; }
+        .fields-3 { display: flex; gap: 8px; }
+        .fields-3 .field { flex: 1; }
+        .fields-3 label { font-size: 11px; }
+
+        .validation {
+            font-size: 11px; color: var(--warning-ink); font-weight: 700; margin-top: 6px;
+        }
+
+        .btn-primary {
+            width: 100%; background-color: var(--primary); color: var(--primary-ink);
+            border: 3px solid var(--ink); border-radius: 4px; height: 56px;
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 6px 4px 0 var(--ink); margin-top: 24px;
+        }
+        .btn-secondary {
+            width: 100%; background-color: var(--bone); color: var(--ink);
+            border: 3px solid var(--ink); border-radius: 4px; height: 52px;
+            font-family: var(--font-archivo); font-weight: 800; font-size: 16px;
+            letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 6px 4px 0 var(--ink); margin-top: 10px;
+        }
+        .btn-secondary.pinned { background-color: var(--lime); }
+        .btn-hint { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 6px; }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="screen-body">
+            <div class="section-header">Resultado do scan</div>
+            <div class="section-sub">Confira os valores estimados e salve no diário</div>
+
+            <div class="photo"><span class="ms">restaurant</span> Foto analisada</div>
+
+            <!-- Calorias -->
+            <div class="nb-card">
+                <span class="source-badge">MANUAL</span>
+                <div class="stat-label">Calorias</div>
+                <div class="big-row">
+                    <span class="big-value">520</span>
+                    <span class="big-unit">kcal</span>
+                </div>
+            </div>
+
+            <!-- Macros -->
+            <div class="macros-row">
+                <div class="macro-card protein">
+                    <div class="ml">Prot.</div>
+                    <div class="mv">24g</div>
+                </div>
+                <div class="macro-card carbs">
+                    <div class="ml">Carb.</div>
+                    <div class="mv">45g</div>
+                </div>
+                <div class="macro-card fat">
+                    <div class="ml">Gord.</div>
+                    <div class="mv">18g</div>
+                </div>
+            </div>
+
+            <!-- Alerta de saúde -->
+            <div class="nb-card alert-card">
+                <div class="alert-title">Atenção para você</div>
+                <ul class="alert-list">
+                    <li>Contém leite e derivados (intolerância registrada)</li>
+                </ul>
+                <div class="alert-note">A foto não confirma ingredientes. Verifique o rótulo ou pergunte como o prato foi preparado.</div>
+            </div>
+
+            <!-- Refeição -->
+            <div class="sub-header">Refeição</div>
+            <div class="meal-chips">
+                <div class="chip selected">Café</div>
+                <div class="chip">Almoço</div>
+                <div class="chip">Jantar</div>
+                <div class="chip">Lanche</div>
+                <div class="chip">Outro</div>
+            </div>
+
+            <!-- Valores editáveis -->
+            <div class="sub-header">Valores da refeição</div>
+            <div class="nb-card">
+                <div class="form-note">Valores estimados pela IA. Ajuste se necessário.</div>
+
+                <div class="field">
+                    <label>Nome da refeição</label>
+                    <input type="text" value="Omelete de queijo">
+                </div>
+                <div class="field">
+                    <label>Calorias (kcal)</label>
+                    <input type="number" value="520">
+                </div>
+                <div class="fields-3">
+                    <div class="field"><label>Proteína (g)</label><input type="number" value="24"></div>
+                    <div class="field"><label>Carbo (g)</label><input type="number" value="45"></div>
+                    <div class="field"><label>Gordura (g)</label><input type="number" value="18"></div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="window.location.href='AnalysisScreen.html'">Salvar no diário</button>
+            <button class="btn-secondary">Fixar prato <span class="ms fill">push_pin</span></button>
+            <div class="btn-hint">Fixe para adicionar este prato ao diário em um toque, sem escanear de novo.</div>
+            <button class="btn-secondary" onclick="window.location.href='CustomMealScreen.html'"><span class="ms">tune</span> Personalizar prato</button>
+            <button class="btn-secondary" onclick="window.location.href='ScanScreen.html'">Analisar outra foto</button>
+        </div>
+    </div>
+</body>
+</html>

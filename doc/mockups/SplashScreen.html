@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrivision - Abertura</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        :root {
+            --primary: #17B26A;
+            --primary-ink: #0E7A45;
+            --lime: #C9F73D;
+            --bone: #F5F3E9;
+            --white: #FFFFFF;
+            --ink: #0B0F0D;
+            --muted: #606961;
+            --secondary: #4C554E;
+            --elevated: #EAE7D9;
+            --font-archivo: 'Archivo', sans-serif;
+            --font-inter: 'Inter Tight', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0; padding: 0; background-color: #2A322D;
+            font-family: var(--font-inter); color: var(--ink);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+        }
+        .ms {
+            font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal; text-transform: none;
+            display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
+            direction: ltr; -webkit-font-feature-settings: 'liga'; -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .phone-frame {
+            width: 100%; max-width: 400px; height: 800px;
+            background-color: var(--bone);
+            border: 3px solid var(--ink); border-radius: 8px;
+            box-shadow: 6px 4px 0 rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 32px;
+        }
+
+        /* Marca */
+        .brand {
+            font-family: var(--font-archivo); font-weight: 800; font-size: 34px;
+            letter-spacing: -0.5px; text-transform: uppercase; color: var(--ink);
+            opacity: 0; transform: translateY(10px);
+            animation: rise 700ms cubic-bezier(.2,.8,.2,1) 300ms forwards;
+        }
+        .tagline {
+            font-size: 13px; font-weight: 700; color: var(--secondary);
+            letter-spacing: 2px; text-transform: uppercase; margin-top: 10px;
+            opacity: 0; animation: fade 700ms ease 620ms forwards;
+        }
+
+        /* Mascote */
+        .mascot-wrap {
+            width: 190px; height: 190px; margin-bottom: 26px;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transform: scale(.86);
+            animation: pop 820ms cubic-bezier(.2,1.2,.3,1) 120ms forwards,
+                       float 2600ms ease-in-out 1000ms infinite;
+            filter: drop-shadow(6px 5px 0 rgba(11,15,13,.18));
+        }
+        .mascot-wrap svg { width: 100%; height: 100%; }
+
+        @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade { to { opacity: 1; } }
+        @keyframes pop  { to { opacity: 1; transform: scale(1); } }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%      { transform: translateY(-9px) scale(1); }
+        }
+
+        /* Barra de carregamento */
+        .loader {
+            position: absolute; bottom: 96px; left: 32px; right: 32px;
+            height: 14px; background-color: var(--elevated);
+            border: 2px solid var(--ink); border-radius: 4px; overflow: hidden;
+        }
+        .loader-fill {
+            height: 100%; width: 0%; background-color: var(--primary);
+            animation: load 2000ms cubic-bezier(.5,.05,.2,1) 400ms forwards;
+        }
+        @keyframes load { to { width: 100%; } }
+
+        .hint {
+            position: absolute; bottom: 56px; left: 0; right: 0; text-align: center;
+            font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted); opacity: 0;
+            animation: fade 600ms ease 1400ms forwards, pulse 1600ms ease-in-out 2000ms infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+
+        .badge {
+            position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+            display: inline-flex; align-items: center; gap: 6px;
+            background-color: var(--lime); border: 2px solid var(--ink);
+            border-radius: 999px; padding: 6px 14px;
+            font-family: var(--font-mono); font-weight: 700; font-size: 11px;
+            letter-spacing: 1px; text-transform: uppercase;
+            box-shadow: 3px 3px 0 var(--ink);
+            opacity: 0; animation: fade 600ms ease 900ms forwards;
+        }
+        .badge .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame" id="frame" onclick="go()">
+        <div class="badge"><span class="ms fill">bolt</span> Nutrivision 1.2</div>
+
+        <div class="mascot-wrap">
+            <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-label="Mascote do Nutrivision">
+                <!-- pernas -->
+                <rect x="80" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <rect x="116" y="150" width="24" height="40" rx="10" fill="#0B0F0D"/>
+                <!-- bracos -->
+                <rect x="34" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <rect x="160" y="106" width="26" height="48" rx="13" fill="#0B0F0D"/>
+                <!-- cabeca -->
+                <rect x="52" y="44" width="116" height="108" rx="26" fill="#C9F73D" stroke="#0B0F0D" stroke-width="10"/>
+                <!-- olhos -->
+                <path d="M74 104 q13 -18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+                <path d="M120 104 q13 -18 26 0" fill="none" stroke="#0B0F0D" stroke-width="9" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <div class="brand">Nutrivision</div>
+        <div class="tagline">Seu diário alimentar</div>
+
+        <div class="loader"><div class="loader-fill"></div></div>
+        <div class="hint">Toque para continuar</div>
+    </div>
+
+    <script>
+        let gone = false;
+        function go() {
+            if (gone) return;
+            gone = true;
+            const f = document.getElementById('frame');
+            f.style.transition = 'opacity 320ms ease';
+            f.style.opacity = '0';
+            setTimeout(() => window.location.href = 'OnboardingScreen.html', 320);
+        }
+        // Avanca sozinho depois da animacao
+        setTimeout(go, 2600);
+    </script>
+</body>
+</html>

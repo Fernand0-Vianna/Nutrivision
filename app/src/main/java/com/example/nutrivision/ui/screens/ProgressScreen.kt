@@ -14,10 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
@@ -270,16 +274,54 @@ private fun WeightChart(weights: List<WeightEntry>, modifier: Modifier = Modifie
     val range = if (maxW - minW < 0.1) 1.0 else maxW - minW
     val ink = Ink
     val green = Primary
+    val gridColor = com.example.nutrivision.ui.theme.Stroke
+    val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier) {
-        val paddingX = 12.dp.toPx()
-        val paddingY = 16.dp.toPx()
-        val chartW = size.width - paddingX * 2
-        val chartH = size.height - paddingY * 2
+        val padX = 16.dp.toPx()
+        val padTop = 20.dp.toPx()
+        val padBottom = 20.dp.toPx()
+        val chartW = size.width - padX - 8.dp.toPx()
+        val chartH = size.height - padTop - padBottom
+        val left = padX
+        val right = size.width - 8.dp.toPx()
+
+        // Linhas de grade tracejadas
+        val dash = PathEffect.dashPathEffect(floatArrayOf(12f, 12f), 0f)
+        drawLine(
+            color = gridColor, start = Offset(left, padTop), end = Offset(right, padTop),
+            strokeWidth = 1.dp.toPx(), pathEffect = dash
+        )
+        drawLine(
+            color = gridColor, start = Offset(left, padTop + chartH), end = Offset(right, padTop + chartH),
+            strokeWidth = 1.dp.toPx(), pathEffect = dash
+        )
+
+        // Rótulos min/máx (Space Mono, como no design)
+        val labelStyle = TextStyle(
+            fontFamily = SpaceMonoFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 9.sp,
+            color = Muted
+        )
+        drawText(
+            textMeasurer = textMeasurer,
+            text = String.format(Locale.ROOT, "%.1f kg", maxW),
+            topLeft = Offset(2.dp.toPx(), 2.dp.toPx()),
+            style = labelStyle
+        )
+        drawText(
+            textMeasurer = textMeasurer,
+            text = String.format(Locale.ROOT, "%.1f kg", minW),
+            topLeft = Offset(2.dp.toPx(), size.height - 14.dp.toPx()),
+            style = labelStyle
+        )
+
+        // Linha e pontos
         val path = Path()
         points.forEachIndexed { index, entry ->
-            val x = paddingX + (index.toFloat() / (points.size - 1).toFloat()) * chartW
-            val y = paddingY + chartH - ((entry.kg - minW) / range).toFloat() * chartH
+            val x = left + (index.toFloat() / (points.size - 1).toFloat()) * chartW
+            val y = padTop + chartH - ((entry.kg - minW) / range).toFloat() * chartH
             if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
             drawCircle(color = green, radius = 6.dp.toPx(), center = Offset(x, y))
             drawCircle(color = ink, radius = 6.dp.toPx(), center = Offset(x, y), style = Stroke(width = 3.dp.toPx()))

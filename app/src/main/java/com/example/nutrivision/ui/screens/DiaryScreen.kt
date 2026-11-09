@@ -4,6 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -288,8 +291,8 @@ private fun DiaryRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
         ) {
             NbIconButton(
-                label = if (isPinned) "✓" else "📌",
                 onClick = onPin,
+                icon = Icons.Filled.PushPin,
                 containerColor = if (isPinned) Lime else Card,
                 size = 44.dp,
                 contentDescription = if (isPinned) {
@@ -299,8 +302,8 @@ private fun DiaryRow(
                 }
             )
             NbIconButton(
-                label = "×",
                 onClick = onDelete,
+                icon = Icons.Filled.Close,
                 size = 44.dp,
                 contentDescription = "Excluir ${record.mealName}"
             )

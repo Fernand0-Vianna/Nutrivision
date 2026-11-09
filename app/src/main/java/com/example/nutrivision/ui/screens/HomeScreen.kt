@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -274,6 +278,29 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(6.dp))
                 }
             }
+            Spacer(modifier = Modifier.height(12.dp))
+            NbCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigate(Screen.CustomMeal) }
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Tune,
+                        contentDescription = null,
+                        tint = Ink,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "PERSONALIZAR UM PRATO",
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = ArchivoFamily,
+                        color = PrimaryInk,
+                        fontSize = 13.sp
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(20.dp))
 
             Row(
@@ -381,8 +408,8 @@ private fun PinnedMealCard(
                 Text(text = "📌", fontSize = 12.sp)
             }
             NbMiniIconButton(
-                label = "×",
                 onClick = onUnpin,
+                icon = Icons.Filled.Close,
                 size = 36.dp,
                 contentDescription = "Remover ${meal.name} dos pratos fixados"
             )

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutrivision — Protótipo navegável</title>
+<style>
+:root{
+  --primary:#17B26A; --primary-ink:#0E7A45; --lime:#C9F73D; --mint:#C9EED9; --soft:#E6F7EF;
+  --bone:#F5F3E9; --white:#FFFFFF; --elevated:#EAE7D9; --stroke:#D6D3C4;
+  --ink:#0B0F0D; --secondary:#4C554E; --muted:#606961;
+  --surface-dark:#2A322D; --surface-gesture:#0E1512;
+  --protein-fill:#7C3AED; --protein-ink:#6D28D9;
+  --carbs-fill:#FF6B2C; --carbs-ink:#C2410C;
+  --fat-fill:#F5B301; --fat-ink:#A16207;
+  --water-fill:#0EA5E9; --water-ink:#0369A1;
+  --danger:#E2402C; --danger-ink:#C2321D; --warning:#E8A200; --warning-ink:#B45309;
+  --pin-yellow:#FFD43B;
+  --font-archivo:'Archivo',system-ui,sans-serif;
+  --font-inter:'Inter Tight',system-ui,sans-serif;
+  --font-mono:'Space Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:#12181a; min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  padding:24px 0; font-family:var(--font-inter); color:var(--ink);
+}
+
+/* ============ Moldura ============ */
+.phone{
+  width:100%; max-width:400px; background:var(--bone);
+  border:3px solid var(--ink); border-radius:8px;
+  box-shadow:6px 4px 0 rgba(0,0,0,.6);
+  position:relative; overflow:hidden; min-height:780px;
+}
+.screen{display:none}
+.screen.active{display:block}
+
+.body-pad{padding:48px 16px 32px}
+.body-pad.has-tabbar{padding-bottom:110px}
+#screen-home .body-pad.has-tabbar{padding-bottom:180px}
+
+/* ============ Tipografia base ============ */
+.section-header{font-family:var(--font-archivo);font-weight:800;font-size:16px;color:var(--ink);text-transform:uppercase;letter-spacing:-.3px}
+.section-header.mt{margin-top:20px}
+.head-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
+.head-row .count{font-size:12px;font-weight:700;color:var(--muted)}
+.subtitle{font-size:13px;font-weight:700;color:var(--secondary);margin-top:4px}
+
+/* ============ Cards ============ */
+.nb-card{
+  background:var(--white);border:3px solid var(--ink);border-radius:4px;
+  box-shadow:6px 4px 0 var(--ink);padding:16px;margin-top:12px;
+}
+.card-title{font-family:var(--font-archivo);font-weight:800;font-size:16px;color:var(--ink);text-transform:uppercase;letter-spacing:-.3px}
+
+/* ============ Labels / números ============ */
+.stat-label{font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:1.1px}
+.big-row{display:flex;align-items:baseline;margin-top:4px}
+.big-value{font-family:var(--font-mono);font-weight:700;font-size:30px;color:var(--ink)}
+.big-goal{font-family:var(--font-mono);font-weight:700;font-size:13px;color:var(--secondary);margin-left:6px}
+
+/* ============ Progresso ============ */
+.track{width:100%;height:14px;background:var(--elevated);border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-top:10px}
+.fill{height:100%;width:0;transition:width .35s}
+.fill-primary{background:var(--primary)}
+.fill-protein{background:var(--protein-fill)}
+.fill-carbs{background:var(--carbs-fill)}
+.fill-fat{background:var(--fat-fill)}
+.fill-water{background:var(--water-fill)}
+.fill-danger{background:var(--danger)}
+
+/* ============ Chips ============ */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{
+  background:var(--white);border:3px solid var(--ink);border-radius:4px;
+  padding:8px 14px;font-family:var(--font-inter);font-weight:800;font-size:11px;
+  letter-spacing:.5px;text-transform:uppercase;color:var(--ink);cursor:pointer;user-select:none;
+}
+.chip.on{background:var(--lime);box-shadow:3px 2px 0 var(--ink)}
+
+/* ============ Botões ============ */
+.btn-primary,.btn-secondary{
+  width:100%;border:3px solid var(--ink);border-radius:4px;
+  font-family:var(--font-archivo);font-weight:800;font-size:16px;letter-spacing:.4px;
+  text-transform:uppercase;cursor:pointer;box-shadow:6px 4px 0 var(--ink);margin-top:12px;
+}
+.btn-primary{background:var(--primary);color:var(--primary-ink);height:56px}
+.btn-primary:active,.btn-secondary:active{transform:translate(3px,2px);box-shadow:3px 2px 0 var(--ink)}
+.btn-primary:disabled{background:var(--elevated);color:var(--muted);border-color:var(--muted);box-shadow:none;cursor:not-allowed}
+.btn-secondary{background:var(--bone);color:var(--ink);height:52px}
+.btn-secondary.on{background:var(--lime)}
+.btn-hint{font-size:11px;color:var(--muted);font-weight:500;margin-top:6px}
+
+/* ============ Campos ============ */
+.field{margin-top:12px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.field input,.field select{
+  width:100%;padding:12px;background:var(--white);border:2px solid var(--stroke);
+  border-radius:4px;font-family:var(--font-inter);font-weight:700;font-size:13px;color:var(--ink);
+}
+.field input:focus,.field select:focus{border-color:var(--ink);outline:none}
+.row2{display:flex;gap:12px}
+.row2 .field{flex:1}
+.row3{display:flex;gap:8px}
+.row3 .field{flex:1}
+.row3 label{font-size:11px}
+
+/* ============ Login ============ */
+#screen-login .screen-body{min-height:780px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px;position:relative}
+.logo{width:72px;height:72px;position:relative;margin-bottom:28px}
+.logo .logo-bg{position:absolute;inset:0;width:72px;height:72px;background:var(--lime);border:3px solid var(--ink);border-radius:4px;box-shadow:4px 4px 0 var(--ink)}
+.logo .corner{position:absolute;width:11px;height:11px;border:3px solid var(--ink);border-radius:2px}
+.logo .c-tl{top:20px;left:20px;border-right:none;border-bottom:none}
+.logo .c-tr{top:20px;right:20px;border-left:none;border-bottom:none}
+.logo .c-bl{bottom:20px;left:20px;border-right:none;border-top:none}
+.logo .c-br{bottom:20px;right:20px;border-left:none;border-top:none}
+.login-title{font-family:var(--font-archivo);font-weight:800;font-size:34px;letter-spacing:-.5px;margin:0;text-align:center}
+.login-tag{font-weight:700;font-size:14px;color:var(--secondary);text-align:center;text-transform:uppercase;letter-spacing:.5px;line-height:1.5;margin-top:12px}
+.login-disclaimer{position:absolute;bottom:20px;left:24px;right:24px;font-size:11px;color:var(--muted);text-align:center;line-height:1.5}
+
+/* ============ Onboarding ============ */
+.dots{display:flex;gap:6px;justify-content:center;margin:16px 0 4px}
+.dot{width:28px;height:6px;background:var(--elevated);border:1.5px solid var(--ink);border-radius:2px}
+.dot.on{background:var(--lime)}
+.step{display:none}.step.on{display:block}
+.step-title{font-family:var(--font-archivo);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:-.3px;margin:20px 0 16px}
+.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.radio-opt{flex:1;min-width:88px;text-align:center;padding:12px 8px;background:var(--white);border:3px solid var(--ink);border-radius:4px;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer}
+.radio-opt.on{background:var(--lime);box-shadow:3px 2px 0 var(--ink)}
+.bmi-box{background:var(--elevated);border:2px solid var(--ink);border-radius:4px;padding:16px;text-align:center}
+.bmi-box .bl{font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:1.1px}
+.bmi-box .bv{font-family:var(--font-mono);font-weight:700;font-size:28px;color:var(--primary-ink);margin-top:4px}
+.bmi-box .bc{font-size:12px;color:var(--secondary);margin-top:4px}
+.summary-item{background:var(--white);border:3px solid var(--ink);border-radius:4px;box-shadow:6px 4px 0 var(--ink);padding:14px;margin-top:10px}
+.summary-item .sl{font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:1.1px}
+.summary-item .sv{font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--ink);margin-top:4px}
+.ob-nav{display:flex;gap:12px;margin-top:24px}
+.ob-nav button{flex:1;margin-top:0}
+
+/* ============ Home ============ */
+.top-header{display:flex;justify-content:space-between;align-items:center}
+.greeting{font-family:var(--font-archivo);font-weight:800;font-size:18px;letter-spacing:-.3px}
+.date-label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.4px}
+.h-actions{display:flex;gap:10px;align-items:center}
+.avatar,.scan-btn{
+  width:44px;height:44px;background:var(--lime);border:2px solid var(--ink);border-radius:4px;
+  box-shadow:4px 4px 0 var(--ink);display:flex;align-items:center;justify-content:center;
+  font-weight:800;cursor:pointer;font-size:16px;
+}
+.scan-btn{font-size:20px}
+.macro-inline{display:flex;gap:16px;margin-top:12px}
+.macro-inline span{font-weight:700;font-size:13px}
+.m-protein{color:var(--protein-ink)}.m-carbs{color:var(--carbs-ink)}.m-fat{color:var(--fat-ink)}
+.pinned-scroll{display:flex;gap:12px;margin-top:12px;overflow-x:auto;padding-bottom:6px}
+.pinned-card{min-width:150px;max-width:150px;flex-shrink:0;background:var(--white);border:3px solid var(--ink);border-radius:4px;box-shadow:6px 4px 0 var(--ink);padding:14px}
+.pinned-top{display:flex;justify-content:space-between;align-items:center}
+.pin-badge{background:var(--pin-yellow);border:1px solid var(--ink);border-radius:4px;padding:2px 5px;font-size:12px}
+.mini-btn{width:32px;height:32px;background:var(--white);border:2px solid var(--ink);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;font-size:13px}
+.pinned-name{font-family:var(--font-archivo);font-weight:800;font-size:12px;text-transform:uppercase;margin-top:10px;line-height:1.2;overflow-wrap:anywhere}
+.pinned-kcal{font-family:var(--font-mono);font-weight:700;font-size:17px;color:var(--primary-ink);margin-top:4px}
+.pinned-macros{font-weight:700;font-size:10px;color:var(--secondary);margin-top:2px}
+.add-btn{width:100%;height:44px;margin-top:10px;background:var(--white);border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);font-family:var(--font-archivo);font-weight:800;font-size:10px;letter-spacing:.4px;text-transform:uppercase;cursor:pointer}
+.add-btn.on{background:var(--lime)}
+.meal-row{display:flex;align-items:center;gap:12px}
+.meal-thumb{width:56px;height:56px;background:var(--lime);border:2px solid var(--ink);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.meal-thumb.sm{width:64px;height:64px}
+.meal-info{flex:1}
+.meal-info .m-name{font-family:var(--font-archivo);font-weight:800;font-size:16px;text-transform:uppercase}
+.meal-info .m-time{font-weight:700;font-size:11px;color:var(--muted);float:right}
+.meal-info .m-kcal{font-weight:700;font-size:12px;color:var(--secondary);margin-top:4px}
+.meal-info .m-macros{font-weight:700;font-size:11px;color:var(--muted);margin-top:2px}
+.link-card{text-align:center;font-weight:800;color:var(--primary-ink);font-size:13px;cursor:pointer}
+.fab{
+  position:absolute;bottom:92px;left:50%;transform:translateX(-50%);
+  width:56px;height:56px;background:var(--lime);border:3px solid var(--ink);border-radius:4px;
+  box-shadow:5px 4px 0 var(--ink);display:flex;align-items:center;justify-content:center;
+  font-size:26px;cursor:pointer;z-index:5;
+}
+.fab:active{transform:translate(calc(-50% + 3px),2px);box-shadow:2px 2px 0 var(--ink)}
+
+/* ============ Scan ============ */
+#screen-scan{background:var(--surface-dark)}
+#screen-scan .screen-body{padding:40px 20px 28px}
+.scan-header{display:flex;justify-content:space-between;align-items:center}
+.close-btn{width:44px;height:44px;background:var(--surface-gesture);border:2px solid rgba(245,243,233,.35);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--bone);font-size:24px;font-weight:700;cursor:pointer}
+.scan-header h1{font-family:var(--font-archivo);font-weight:800;font-size:14px;color:var(--bone);text-transform:uppercase;letter-spacing:1.2px;margin:0}
+.spacer{width:44px}
+.viewfinder{width:100%;aspect-ratio:1/.92;background:var(--surface-gesture);border:2px solid rgba(245,243,233,.18);border-radius:4px;position:relative;overflow:hidden;margin-top:24px}
+.vf-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;width:100%}
+.frame-box{width:120px;height:120px;border:3px solid var(--lime);border-radius:4px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center}
+.frame-box span{font-family:var(--font-archivo);font-weight:800;font-size:16px;color:var(--lime);letter-spacing:1.1px;text-transform:uppercase}
+.instruction{font-family:var(--font-archivo);font-weight:800;font-size:16px;color:var(--bone);text-transform:uppercase;margin-bottom:6px}
+.hint{font-size:13px;color:rgba(245,243,233,.65)}
+.corner{position:absolute;width:22px;height:22px;border:3px solid var(--lime);border-radius:2px}
+.c-tl{top:14px;left:14px;border-right:none;border-bottom:none}
+.c-tr{top:14px;right:14px;border-left:none;border-bottom:none}
+.c-bl{bottom:14px;left:14px;border-right:none;border-top:none}
+.c-br{bottom:14px;right:14px;border-left:none;border-top:none}
+.warn-banner{background:rgba(232,162,0,.14);border:1px solid rgba(232,162,0,.5);border-radius:4px;padding:10px;margin-top:18px}
+.warn-banner p{color:var(--bone);font-size:12px;font-weight:500;margin:0}
+.btn-secondary.dark{background:var(--surface-gesture);color:var(--bone)}
+.spinner{width:44px;height:44px;border:3px solid rgba(245,243,233,.2);border-top-color:var(--lime);border-radius:50%;margin:40px auto 20px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:var(--font-archivo);font-weight:800;font-size:16px;color:var(--bone);text-transform:uppercase;text-align:center;margin-bottom:8px}
+.loading-sub{font-size:13px;color:rgba(245,243,233,.7);text-align:center}
+
+/* ============ Result ============ */
+.photo{width:100%;height:180px;background:var(--lime);border:2px solid var(--ink);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-top:16px}
+.source-badge{position:absolute;top:14px;right:14px;border:1px solid var(--ink);border-radius:4px;padding:4px 10px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:var(--elevated)}
+.source-badge.gemini{background:var(--mint)}
+.source-badge.fixado{background:var(--pin-yellow)}
+.nb-card.rel{position:relative}
+.macros-row{display:flex;gap:8px;margin-top:12px}
+.macro-card{flex:1;background:var(--white);border:3px solid var(--ink);border-radius:4px;box-shadow:6px 4px 0 var(--ink);padding:12px}
+.macro-card .ml{font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase}
+.macro-card .mv{font-family:var(--font-mono);font-weight:700;font-size:18px;margin-top:4px}
+.macro-card.protein .mv{color:var(--protein-ink)}
+.macro-card.carbs .mv{color:var(--carbs-ink)}
+.macro-card.fat .mv{color:var(--fat-ink)}
+.alert-title{font-weight:800;color:var(--danger-ink);text-transform:uppercase;letter-spacing:.5px;font-size:13px}
+.alert-list{margin:8px 0 0;padding-left:16px}
+.alert-list li{font-weight:500;color:var(--secondary);font-size:12px;margin-bottom:4px}
+.alert-note{font-weight:500;color:var(--muted);font-size:11px;margin-top:8px}
+.validation{font-size:11px;color:var(--warning-ink);font-weight:700;margin-top:6px;display:none}
+.validation.on{display:block}
+
+/* ============ Analysis ============ */
+.stat-row{display:flex;gap:8px;margin-top:16px}
+.stat-card{flex:1;background:var(--white);border:3px solid var(--ink);border-radius:4px;box-shadow:6px 4px 0 var(--ink);padding:16px}
+.stat-card .sl{font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:1.1px}
+.stat-card .sv{font-family:var(--font-mono);font-weight:700;font-size:28px;color:var(--ink);margin-top:4px}
+.stat-card .sv.green{color:var(--primary-ink)}
+.insight{font-weight:500;color:var(--secondary);margin-top:8px;line-height:1.5;font-size:14px}
+.balance-row{margin-top:12px}
+.balance-top{display:flex;justify-content:space-between;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1.1px}
+.balance-top .bl{color:var(--ink)}
+.balance-top .bv{color:var(--secondary);font-family:var(--font-mono)}
+.balance-top .bv.over{color:var(--danger-ink)}
+.balance-row .track{margin-top:6px}
+
+/* ============ Diary ============ */
+.day-header{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.day-header .dl{font-family:var(--font-archivo);font-weight:800;font-size:13px;text-transform:uppercase}
+.day-header .ds{font-weight:700;color:var(--muted);font-size:11px}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.icon-btn{width:44px;height:44px;background:var(--white);border:2.5px solid var(--ink);border-radius:4px;box-shadow:4px 3px 0 var(--ink);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer}
+.icon-btn.on{background:var(--lime)}
+
+/* ============ Progress ============ */
+.chart-title{font-family:var(--font-archivo);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:-.3px}
+.weight-chart{margin-top:12px;width:100%;height:130px;display:block}
+.weight-row{display:flex;justify-content:space-between;padding:4px 0;font-weight:700;font-size:13px}
+.weight-row .wv{font-family:var(--font-mono);color:var(--primary-ink)}
+.macro-bar{margin-top:10px}
+.macro-bar .mb-top{display:flex;justify-content:space-between;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1.1px;margin-bottom:6px}
+.macro-bar .mb-top .mb-label{color:var(--ink)}
+.macro-bar .track{margin-top:0}
+.history-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--elevated);font-size:12px}
+.history-row .hd{font-family:var(--font-archivo);font-weight:800}
+
+/* ============ Profile ============ */
+.avatar-card{display:flex;align-items:center;gap:14px}
+.avatar-lg{width:56px;height:56px;background:var(--lime);border:3px solid var(--ink);border-radius:4px;box-shadow:4px 4px 0 var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+.avatar-info .name{font-family:var(--font-archivo);font-weight:800;font-size:16px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
+.avatar-info .sub{font-size:12px;color:var(--secondary);font-weight:500}
+.bmi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.bmi-cell{background:var(--white);border:2px solid var(--ink);border-radius:4px;padding:12px}
+.bmi-cell .c-label{font-size:10px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:1.1px}
+.bmi-cell .c-value{font-family:var(--font-mono);font-weight:700;font-size:20px;margin-top:4px}
+.bmi-cell .c-sub{font-size:11px;color:var(--muted)}
+.health-title{font-weight:800;color:var(--danger-ink);text-transform:uppercase;letter-spacing:.5px;font-size:13px}
+.health-list{margin:8px 0 0;padding-left:16px}
+.health-list li{font-weight:500;color:var(--secondary);font-size:12px;margin-bottom:4px}
+.health-note{font-weight:500;color:var(--muted);font-size:11px;margin-top:8px}
+.goal-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.goal-row:first-child{margin-top:0}
+.goal-row+.goal-row{padding-top:12px;border-top:1px solid var(--elevated)}
+.goal-row .gl{font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:1.1px}
+.goal-row .gv{font-family:var(--font-mono);font-weight:700;font-size:15px;margin-top:2px}
+.goal-controls{display:flex;gap:6px;align-items:center}
+.ctrl-btn{width:32px;height:32px;background:var(--white);border:2px solid var(--ink);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer}
+.goal-input{min-width:56px;height:32px;background:var(--elevated);border:2px solid var(--ink);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:700;font-size:13px;padding:0 8px}
+.water-top{display:flex;justify-content:space-between;align-items:baseline}
+.w-label{font-size:11px;font-weight:700;color:var(--water-ink);text-transform:uppercase;letter-spacing:1.1px}
+.w-value{font-family:var(--font-mono);font-weight:700;font-size:16px;color:var(--water-ink)}
+.i-status{font-size:13px;font-weight:700;color:var(--warning-ink);margin:6px 0 12px}
+
+/* ============ Tab bar ============ */
+.tab-bar{
+  position:absolute;bottom:0;left:0;right:0;height:80px;background:var(--white);
+  border-top:3px solid var(--ink);display:none;justify-content:space-evenly;align-items:center;z-index:20;
+}
+.tab-bar.show{display:flex}
+.tab{flex:1;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer}
+.tab .tl{font-size:11px;font-weight:700;letter-spacing:1.1px;color:var(--ink);text-transform:uppercase}
+.tab.on .tl{font-weight:800}
+.tab .tu{width:24px;height:2px;background:var(--ink);margin-top:4px}
+.tab:not(.on) .tu{visibility:hidden}
+
+/* Aviso de protótipo */
+.proto-note{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:#8a928c;font-family:var(--font-inter)}
+</style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
+    <style>
+        .ms {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal; font-style: normal;
+            font-size: 20px; line-height: 1; letter-spacing: normal;
+            text-transform: none; display: inline-flex; align-items: center;
+            justify-content: center; white-space: nowrap; direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+        .meal-thumb .ms { font-size: 26px; }
+        .fab .ms, .scan-btn .ms { font-size: 24px; }
+        .icon-btn .ms, .unpin-btn .ms, .mini-btn .ms, .close-btn .ms { font-size: 18px; }
+        .pin-badge .ms { font-size: 15px; }
+        .tab .ms { font-size: 24px; color: var(--ink); margin-bottom: 2px; }
+        .chip .ms { font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- ================= LOGIN ================= -->
+  <section class="screen active" id="screen-login">
+    <div class="screen-body">
+      <div class="logo">
+        <div class="logo-bg"></div>
+        <div class="corner c-tl"></div><div class="corner c-tr"></div>
+        <div class="corner c-bl"></div><div class="corner c-br"></div>
+      </div>
+      <h1 class="login-title">NUTRIVISION</h1>
+      <p class="login-tag">Registre suas refeições<br>e veja o que você come</p>
+      <div style="height:48px"></div>
+      <button class="btn-primary" data-go="onboarding" style="margin-top:0">Começar</button>
+      <p class="login-disclaimer">Aviso de saúde: aplicativo de bem-estar. Não substitui avaliação médica ou nutricional.</p>
+    </div>
+  </section>
+
+  <!-- ================= ONBOARDING ================= -->
+  <section class="screen" id="screen-onboarding">
+    <div class="body-pad">
+      <h1 class="login-title" style="font-size:20px">Nutrivision</h1>
+      <div class="subtitle" id="ob-indicator" style="text-align:center">Passo 1 de 4 • Dados pessoais</div>
+      <div class="dots" id="ob-dots">
+        <div class="dot on" data-dot="1"></div><div class="dot" data-dot="2"></div>
+        <div class="dot" data-dot="3"></div><div class="dot" data-dot="4"></div>
+      </div>
+
+      <section class="step on" data-step="1">
+        <div class="step-title">Seus dados</div>
+        <div class="field"><label>Nome completo</label><input type="text" id="ob-name" value="Fernando Santos Viana"></div>
+        <div class="row2">
+          <div class="field"><label>Idade</label><input type="number" id="ob-age" value="28"></div>
+          <div class="field"><label>Sexo</label>
+            <select id="ob-gender"><option value="M" selected>Masculino</option><option value="F">Feminino</option><option value="O">Outro</option></select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Altura (cm)</label><input type="number" id="ob-height" value="175" oninput="obBMI()"></div>
+          <div class="field"><label>Peso (kg)</label><input type="number" id="ob-weight" value="75" oninput="obBMI()"></div>
+        </div>
+        <div class="bmi-box">
+          <div class="bl">Seu IMC</div>
+          <div class="bv" id="ob-bmi">--</div>
+          <div class="bc" id="ob-bmi-class">Insira altura e peso</div>
+        </div>
+      </section>
+
+      <section class="step" data-step="2">
+        <div class="step-title">Objetivo e atividade</div>
+        <div class="field"><label>Qual seu objetivo?</label></div>
+        <div class="radio-group" id="ob-goal">
+          <div class="radio-opt on" data-v="Perda de peso">Perda de peso</div>
+          <div class="radio-opt" data-v="Manutenção">Manutenção</div>
+          <div class="radio-opt" data-v="Ganho de massa">Ganho de massa</div>
+        </div>
+        <div class="field"><label>Nível de atividade</label></div>
+        <div class="radio-group" id="ob-activity">
+          <div class="radio-opt on" data-v="Sedentário">Sedentário</div>
+          <div class="radio-opt" data-v="Leve">Leve</div>
+          <div class="radio-opt" data-v="Moderado">Moderado</div>
+          <div class="radio-opt" data-v="Intenso">Intenso</div>
+          <div class="radio-opt" data-v="Muito intenso">Muito intenso</div>
+        </div>
+      </section>
+
+      <section class="step" data-step="3">
+        <div class="step-title">Restrições e saúde</div>
+        <div class="field"><label>Intolerâncias</label></div>
+        <div class="chips" id="ob-intol" style="margin-top:0">
+          <div class="chip">Leite e derivados</div><div class="chip">Glúten</div><div class="chip">Ovos</div>
+          <div class="chip">Soja</div><div class="chip">Frutos do mar</div><div class="chip">Outros</div>
+        </div>
+        <div class="field"><label>Alergias</label></div>
+        <div class="chips" id="ob-alerg" style="margin-top:0">
+          <div class="chip">Amendoim</div><div class="chip">Camarão</div><div class="chip">Peixe</div>
+          <div class="chip">Nozes</div><div class="chip">Outras</div>
+        </div>
+        <div class="field"><label>Condições de saúde</label></div>
+        <div class="chips" id="ob-cond" style="margin-top:0">
+          <div class="chip">Diabetes</div><div class="chip">Hipertensão</div><div class="chip">Colesterol alto</div>
+          <div class="chip">Gastrite</div><div class="chip">Outras</div>
+        </div>
+      </section>
+
+      <section class="step" data-step="4">
+        <div class="step-title">Resumo</div>
+        <div class="summary-item"><div class="sl">Nome</div><div class="sv" id="sum-name">-</div></div>
+        <div class="summary-item"><div class="sl">Idade / Sexo</div><div class="sv" id="sum-age">-</div></div>
+        <div class="summary-item"><div class="sl">Altura / Peso</div><div class="sv" id="sum-hw">-</div></div>
+        <div class="summary-item"><div class="sl">IMC</div><div class="sv" id="sum-bmi">-</div></div>
+        <div class="summary-item"><div class="sl">Objetivo</div><div class="sv" id="sum-goal">-</div></div>
+        <div class="summary-item"><div class="sl">Atividade</div><div class="sv" id="sum-act">-</div></div>
+        <div class="summary-item"><div class="sl">Intolerâncias</div><div class="sv" id="sum-intol">Nenhuma</div></div>
+        <div class="summary-item"><div class="sl">Condições</div><div class="sv" id="sum-cond">Nenhuma</div></div>
+      </section>
+
+      <div class="ob-nav">
+        <button class="btn-secondary" id="ob-prev" style="display:none">Voltar</button>
+        <button class="btn-primary" id="ob-next">Próximo</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOME ================= -->
+  <section class="screen" id="screen-home">
+    <div class="body-pad has-tabbar">
+      <div class="top-header">
+        <div>
+          <div class="greeting">OLÁ, FERNANDO</div>
+          <div class="date-label">Sexta-feira, 06 de novembro</div>
+        </div>
+        <div class="h-actions">
+          <div class="scan-btn" data-go="scan" title="Novo scan"><span class="ms">photo_camera</span></div>
+          <div class="avatar" data-go="profile" title="Perfil">FV</div>
+        </div>
+      </div>
+
+      <div class="section-header mt">Meta do dia</div>
+      <div class="nb-card" style="margin-top:12px">
+        <div class="stat-label">Calorias</div>
+        <div class="big-row"><span class="big-value">1.510</span><span class="big-goal">/ 2.500 kcal</span></div>
+        <div class="track"><div class="fill fill-primary" style="width:60%"></div></div>
+        <div class="macro-inline">
+          <span class="m-protein">P 88/90g</span><span class="m-carbs">C 118/250g</span><span class="m-fat">G 62/70g</span>
+        </div>
+      </div>
+
+      <div class="head-row">
+        <span class="section-header">Água</span>
+        <span id="home-water-label" class="w-value" style="font-size:13px">1.200 ml / 2.000 ml</span>
+      </div>
+      <div class="nb-card" style="margin-top:12px">
+        <div class="track" style="margin-top:0"><div class="fill fill-water" id="home-water-fill" style="width:60%"></div></div>
+        <div class="chips">
+          <div class="chip" data-water="250">+250 ml</div>
+          <div class="chip" data-water="500">+500 ml</div>
+          <div class="chip" data-water="reset" style="margin-left:auto;background:var(--elevated)">Zerar</div>
+        </div>
+      </div>
+
+      <div class="head-row">
+        <span class="section-header">Pratos fixados</span>
+        <span class="count">2 pratos</span>
+      </div>
+      <div class="pinned-scroll">
+        <div class="pinned-card">
+          <div class="pinned-top"><span class="pin-badge"><span class="ms fill">push_pin</span></span><div class="mini-btn" data-unpin><span class="ms">close</span></div></div>
+          <div class="pinned-name">Omelete de queijo</div>
+          <div class="pinned-kcal">380 kcal</div>
+          <div class="pinned-macros">P:24g C:6g G:28g</div>
+          <button class="add-btn" data-add>+ Adicionar</button>
+        </div>
+        <div class="pinned-card">
+          <div class="pinned-top"><span class="pin-badge"><span class="ms fill">push_pin</span></span><div class="mini-btn" data-unpin><span class="ms">close</span></div></div>
+          <div class="pinned-name">Frango com salada</div>
+          <div class="pinned-kcal">520 kcal</div>
+          <div class="pinned-macros">P:42g C:30g G:18g</div>
+          <button class="add-btn on" data-add>Adicionado <span class="ms">check</span></button>
+        </div>
+      </div>
+
+      <div class="head-row">
+        <span class="section-header">Refeições de hoje</span>
+        <span class="count">3 registros</span>
+      </div>
+
+      <div class="nb-card" style="margin-top:12px">
+        <div class="meal-row">
+          <div class="meal-thumb"><span class="ms">restaurant</span></div>
+          <div class="meal-info"><span class="m-time">12:40</span><div class="m-name">Frango grelhado</div><div class="m-kcal">520 kcal · P:42g C:30g G:18g</div></div>
+        </div>
+      </div>
+      <div class="nb-card">
+        <div class="meal-row">
+          <div class="meal-thumb"><span class="ms">local_dining</span></div>
+          <div class="meal-info"><span class="m-time">08:15</span><div class="m-name">Omelete de queijo</div><div class="m-kcal">380 kcal · P:24g C:6g G:28g</div></div>
+        </div>
+      </div>
+      <div class="nb-card">
+        <div class="meal-row">
+          <div class="meal-thumb"><span class="ms">ramen_dining</span></div>
+          <div class="meal-info"><span class="m-time">19:30</span><div class="m-name">Macarrão integral</div><div class="m-kcal">610 kcal · P:22g C:82g G:16g</div></div>
+        </div>
+      </div>
+      <div class="nb-card"><div class="link-card" data-go="diary">VER DIÁRIO COMPLETO <span class="ms">arrow_forward</span></div></div>
+    </div>
+    <div class="fab" data-go="scan" title="Novo scan"><span class="ms">photo_camera</span></div>
+  </section>
+
+  <!-- ================= SCAN ================= -->
+  <section class="screen" id="screen-scan">
+    <div class="screen-body">
+      <div id="scan-default">
+        <div class="scan-header">
+          <button class="close-btn" data-go="home"><span class="ms">close</span></button>
+          <h1>Novo scan</h1><div class="spacer"></div>
+        </div>
+        <div class="viewfinder">
+          <div class="corner c-tl"></div><div class="corner c-tr"></div>
+          <div class="corner c-bl"></div><div class="corner c-br"></div>
+          <div class="vf-center">
+            <div class="frame-box"><span>Foto</span></div>
+            <div class="instruction">Aponte para o alimento</div>
+            <div class="hint">Enquadre a porção inteira, com boa luz</div>
+          </div>
+        </div>
+        <div class="warn-banner"><p>Sem chave Gemini a análise automática fica indisponível. Você pode registrar os valores manualmente.</p></div>
+        <button class="btn-primary" onclick="scanStart()">Tirar foto</button>
+        <button class="btn-secondary dark" onclick="scanStart()">Escolher da galeria</button>
+        <button class="btn-secondary dark" data-go="result">Inserir manualmente</button>
+      </div>
+      <div id="scan-loading" style="display:none">
+        <div class="scan-header"><button class="close-btn" style="opacity:.3"><span class="ms">close</span></button><h1>Novo scan</h1><div class="spacer"></div></div>
+        <div class="spinner"></div>
+        <div class="loading-text">Analisando...</div>
+        <div class="loading-sub" id="scan-sub">Consultando o Gemini</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULT ================= -->
+  <section class="screen" id="screen-result">
+    <div class="body-pad">
+      <div class="section-header">Resultado do scan</div>
+      <div class="subtitle">Confira os valores estimados e salve no diário</div>
+      <div class="photo"><span class="ms">restaurant</span> Foto analisada</div>
+
+      <div class="nb-card rel">
+        <span class="source-badge" id="res-source">Manual</span>
+        <div class="stat-label">Calorias</div>
+        <div class="big-row"><span class="big-value" id="res-kcal">520</span><span class="big-goal">kcal</span></div>
+      </div>
+
+      <div class="macros-row">
+        <div class="macro-card protein"><div class="ml">Prot.</div><div class="mv" id="res-p">24g</div></div>
+        <div class="macro-card carbs"><div class="ml">Carb.</div><div class="mv" id="res-c">45g</div></div>
+        <div class="macro-card fat"><div class="ml">Gord.</div><div class="mv" id="res-g">18g</div></div>
+      </div>
+
+      <div class="nb-card">
+        <div class="alert-title">Atenção para você</div>
+        <ul class="alert-list"><li>Contém leite e derivados (intolerância registrada)</li></ul>
+        <div class="alert-note">A foto não confirma ingredientes. Verifique o rótulo ou pergunte como o prato foi preparado.</div>
+      </div>
+
+      <div class="section-header mt">Refeição</div>
+      <div class="chips" data-group="meal">
+        <div class="chip on">Café</div><div class="chip">Almoço</div><div class="chip">Jantar</div>
+        <div class="chip">Lanche</div><div class="chip">Outro</div>
+      </div>
+
+      <div class="section-header mt">Valores da refeição</div>
+      <div class="nb-card">
+        <div style="font-weight:500;color:var(--secondary);font-size:12px">Valores estimados pela IA. Ajuste se necessário.</div>
+        <div class="field"><label>Nome da refeição</label><input type="text" id="f-name" value="Omelete de queijo"></div>
+        <div class="field"><label>Calorias (kcal)</label><input type="number" id="f-kcal" value="520"></div>
+        <div class="row3">
+          <div class="field"><label>Proteína (g)</label><input type="number" id="f-p" value="24"></div>
+          <div class="field"><label>Carbo (g)</label><input type="number" id="f-c" value="45"></div>
+          <div class="field"><label>Gordura (g)</label><input type="number" id="f-g" value="18"></div>
+        </div>
+      </div>
+      <button class="btn-primary" data-go="analysis">Salvar no diário</button>
+      <button class="btn-secondary" id="btn-pin">Fixar prato <span class="ms fill">push_pin</span></button>
+      <div class="btn-hint">Fixe para adicionar este prato ao diário em um toque, sem escanear de novo.</div>
+      <button class="btn-secondary" data-go="scan">Analisar outra foto</button>
+    </div>
+  </section>
+
+  <!-- ================= ANALYSIS ================= -->
+  <section class="screen" id="screen-analysis">
+    <div class="body-pad">
+      <div class="section-header">Análise nutricional</div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="sl">Registros</div><div class="sv">3</div></div>
+        <div class="stat-card"><div class="sl">Média kcal</div><div class="sv green">503.3</div></div>
+      </div>
+      <div class="nb-card">
+        <div class="card-title">Insight nutricional</div>
+        <p class="insight">Balanço equilibrado de macros. Continue registrando para manter a consistência.</p>
+      </div>
+      <div class="nb-card">
+        <div class="card-title">Balanço vs metas</div>
+        <div class="balance-row"><div class="balance-top"><span class="bl">Calorias</span><span class="bv">1510 / 2500</span></div><div class="track"><div class="fill fill-primary" style="width:60%"></div></div></div>
+        <div class="balance-row"><div class="balance-top"><span class="bl">Proteína</span><span class="bv">88 / 90</span></div><div class="track"><div class="fill fill-protein" style="width:98%"></div></div></div>
+        <div class="balance-row"><div class="balance-top"><span class="bl">Carboidrato</span><span class="bv">118 / 250</span></div><div class="track"><div class="fill fill-carbs" style="width:47%"></div></div></div>
+        <div class="balance-row"><div class="balance-top"><span class="bl">Gordura</span><span class="bv">62 / 70</span></div><div class="track"><div class="fill fill-fat" style="width:89%"></div></div></div>
+      </div>
+      <button class="btn-primary" data-go="home">Voltar</button>
+    </div>
+  </section>
+
+  <!-- ================= DIARY ================= -->
+  <section class="screen" id="screen-diary">
+    <div class="body-pad has-tabbar">
+      <div class="section-header">Diário alimentar</div>
+      <div class="subtitle">12 refeições no período · 6.780 kcal</div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="sl">Registros</div><div class="sv">12</div></div>
+        <div class="stat-card"><div class="sl">Média kcal</div><div class="sv green">565</div></div>
+      </div>
+      <div class="chips" data-group="range">
+        <div class="chip">HOJE</div><div class="chip on">7 DIAS</div><div class="chip">30 DIAS</div><div class="chip">TUDO</div>
+      </div>
+      <div class="chips" data-group="meal-filter" style="margin-top:8px">
+        <div class="chip on">TODOS</div><div class="chip">Café</div><div class="chip">Almoço</div>
+        <div class="chip">Jantar</div><div class="chip">Lanche</div><div class="chip">Outro</div>
+      </div>
+
+      <div class="day-header"><span class="dl">Hoje</span><span class="ds">3 ref · 1.510 kcal</span></div>
+
+      <div class="nb-card" style="margin-top:12px">
+        <div class="meal-row">
+          <div class="meal-thumb sm"><span class="ms">restaurant</span></div>
+          <div class="meal-info"><span class="m-time">12:40</span><div class="m-name" style="font-size:15px">Frango grelhado</div>
+            <div class="m-kcal">520 kcal</div><div class="m-macros">P:42g · C:30g · G:18g · IA</div></div>
+        </div>
+        <div class="actions"><div class="icon-btn on" data-pin><span class="ms">check</span></div><div class="icon-btn" data-del><span class="ms">close</span></div></div>
+      </div>
+      <div class="nb-card">
+        <div class="meal-row">
+          <div class="meal-thumb sm"><span class="ms">local_dining</span></div>
+          <div class="meal-info"><span class="m-time">08:15</span><div class="m-name" style="font-size:15px">Omelete de queijo</div>
+            <div class="m-kcal">380 kcal</div><div class="m-macros">P:24g · C:6g · G:28g · FIXADO</div></div>
+        </div>
+        <div class="actions"><div class="icon-btn" data-pin><span class="ms fill">push_pin</span></div><div class="icon-btn" data-del><span class="ms">close</span></div></div>
+      </div>
+      <div class="nb-card">
+        <div class="meal-row">
+          <div class="meal-thumb sm"><span class="ms">ramen_dining</span></div>
+          <div class="meal-info"><span class="m-time">19:30</span><div class="m-name" style="font-size:15px">Macarrão integral</div>
+            <div class="m-kcal">610 kcal</div><div class="m-macros">P:22g · C:82g · G:16g · MANUAL</div></div>
+        </div>
+        <div class="actions"><div class="icon-btn" data-pin><span class="ms fill">push_pin</span></div><div class="icon-btn" data-del><span class="ms">close</span></div></div>
+      </div>
+
+      <div class="day-header"><span class="dl">05/11</span><span class="ds">1 ref · 320 kcal</span></div>
+      <div class="nb-card" style="margin-top:12px">
+        <div class="meal-row">
+          <div class="meal-thumb sm"><span class="ms">set_meal</span></div>
+          <div class="meal-info"><span class="m-time">12:30</span><div class="m-name" style="font-size:15px">Salada de atum</div>
+            <div class="m-kcal">320 kcal</div><div class="m-macros">P:28g · C:12g · G:16g · IA</div></div>
+        </div>
+        <div class="actions"><div class="icon-btn" data-pin><span class="ms fill">push_pin</span></div><div class="icon-btn" data-del><span class="ms">close</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROGRESS ================= -->
+  <section class="screen" id="screen-progress">
+    <div class="body-pad has-tabbar">
+      <div class="section-header">Progresso e insights</div>
+      <div class="chips" data-group="p-range">
+        <div class="chip">HOJE</div><div class="chip on">7 DIAS</div><div class="chip">30 DIAS</div><div class="chip">TUDO</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="sl">Registros</div><div class="sv">18</div></div>
+        <div class="stat-card"><div class="sl">Média/registro</div><div class="sv green">487</div></div>
+      </div>
+
+      <div class="nb-card">
+        <div class="chart-title">Evolução de peso</div>
+        <div style="font-weight:700;color:var(--secondary);font-size:12px;margin-top:6px">4 registro(s)</div>
+        <svg class="weight-chart" viewBox="0 0 340 130" preserveAspectRatio="none">
+          <line x1="0" y1="20" x2="340" y2="20" stroke="#D6D3C4" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="0" y1="115" x2="340" y2="115" stroke="#D6D3C4" stroke-width="1" stroke-dasharray="4 4"/>
+          <text x="4" y="16" font-family="'Space Mono',monospace" font-size="9" font-weight="700" fill="#606961">75.5 kg</text>
+          <text x="4" y="126" font-family="'Space Mono',monospace" font-size="9" font-weight="700" fill="#606961">74.2 kg</text>
+          <path d="M12 90 L92 70 L172 78 L252 50 L332 38" fill="none" stroke="#17B26A" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="12" cy="90" r="6" fill="#17B26A" stroke="#0B0F0D" stroke-width="3"/>
+          <circle cx="92" cy="70" r="6" fill="#17B26A" stroke="#0B0F0D" stroke-width="3"/>
+          <circle cx="172" cy="78" r="6" fill="#17B26A" stroke="#0B0F0D" stroke-width="3"/>
+          <circle cx="252" cy="50" r="6" fill="#17B26A" stroke="#0B0F0D" stroke-width="3"/>
+          <circle cx="332" cy="38" r="6" fill="#17B26A" stroke="#0B0F0D" stroke-width="3"/>
+        </svg>
+        <div class="weight-row"><span>06/11/2026</span><span class="wv">74.2 kg</span></div>
+        <div class="weight-row"><span>05/11/2026</span><span class="wv">74.8 kg</span></div>
+        <div class="weight-row"><span>04/11/2026</span><span class="wv">75.3 kg</span></div>
+        <div class="weight-row"><span>03/11/2026</span><span class="wv">75.5 kg</span></div>
+      </div>
+
+      <div class="nb-card">
+        <div class="chart-title">Média diária de macros</div>
+        <div style="font-weight:500;color:var(--muted);font-size:12px;margin-top:4px">6 dia(s) com registro no período</div>
+        <div class="macro-bar"><div class="mb-top"><span class="mb-label">Proteína</span><span style="color:var(--protein-fill)">82g / 90g</span></div><div class="track"><div class="fill fill-protein" style="width:91%"></div></div></div>
+        <div class="macro-bar"><div class="mb-top"><span class="mb-label">Carboidrato</span><span style="color:var(--carbs-fill)">228g / 250g</span></div><div class="track"><div class="fill fill-carbs" style="width:91%"></div></div></div>
+        <div class="macro-bar"><div class="mb-top"><span class="mb-label">Gordura</span><span style="color:var(--fat-fill)">66g / 70g</span></div><div class="track"><div class="fill fill-fat" style="width:94%"></div></div></div>
+      </div>
+
+      <div class="nb-card">
+        <div class="chart-title">Média diária vs meta</div>
+        <div class="track" style="margin-top:12px"><div class="fill fill-primary" style="width:96%"></div></div>
+        <div style="font-weight:700;color:var(--secondary);font-size:13px;margin-top:8px">2.410 de 2.500 kcal por dia • 6 dia(s) com registro</div>
+      </div>
+
+      <div class="nb-card">
+        <div class="chart-title">Histórico por dia</div>
+        <div style="margin-top:8px">
+          <div class="history-row"><span class="hd">Hoje</span><span style="font-weight:700;color:var(--secondary)">3 ref · 503.3 · 1510 kcal</span></div>
+          <div class="history-row"><span class="hd">05/11</span><span style="font-weight:700;color:var(--secondary)">4 ref · 480.5 · 1922 kcal</span></div>
+          <div class="history-row"><span class="hd">04/11</span><span style="font-weight:700;color:var(--secondary)">3 ref · 610.0 · 1830 kcal</span></div>
+          <div class="history-row" style="border-bottom:none"><span class="hd">03/11</span><span style="font-weight:700;color:var(--secondary)">2 ref · 540.0 · 1080 kcal</span></div>
+        </div>
+      </div>
+
+      <div class="nb-card">
+        <div class="chart-title">Insight</div>
+        <p class="insight">Bom trabalho com a proteína! Mantenha o ritmo dos registros.</p>
+      </div>
+
+      <div class="nb-card">
+        <div class="chart-title">Relatório</div>
+        <p class="insight" style="font-size:13px">Exporte CSV com registros, médias, água e evolução de peso.</p>
+        <button class="btn-primary" onclick="alert('Relatório CSV exportado (simulado).')">Exportar relatório (.CSV)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROFILE ================= -->
+  <section class="screen" id="screen-profile">
+    <div class="body-pad has-tabbar">
+      <div class="section-header">Perfil</div>
+      <div class="nb-card avatar-card" style="margin-top:12px">
+        <div class="avatar-lg">FV</div>
+        <div class="avatar-info"><div class="name">Fernando Santos Viana</div><div class="sub">Bem-estar e nutrição</div></div>
+      </div>
+
+      <div class="section-header mt">Seu IMC</div>
+      <div class="bmi-grid" style="margin-top:12px">
+        <div class="bmi-cell"><div class="c-label">Peso</div><div class="c-value">74.2 kg</div><div class="c-sub">atual</div></div>
+        <div class="bmi-cell"><div class="c-label">Altura</div><div class="c-value">1.75 m</div><div class="c-sub">cadastrada</div></div>
+        <div class="bmi-cell"><div class="c-label">IMC</div><div class="c-value">24.2</div><div class="c-sub">Peso normal</div></div>
+        <div class="bmi-cell"><div class="c-label">Objetivo</div><div class="c-value" style="font-size:14px">Perda de peso</div><div class="c-sub">meta 72 kg</div></div>
+      </div>
+
+      <div class="section-header mt">Atenção para você</div>
+      <div class="nb-card">
+        <div class="health-title">Restrições e condições</div>
+        <ul class="health-list">
+          <li>Intolerância a leite e derivados</li>
+          <li>Alergia a amendoim</li>
+          <li>Condição: hipertensão</li>
+        </ul>
+        <div class="health-note">A foto não confirma ingredientes. Verifique o rótulo ou pergunte como o prato foi preparado.</div>
+      </div>
+
+      <div class="section-header mt">Metas diárias</div>
+      <div class="nb-card">
+        <div class="goal-row"><div><div class="gl">Calorias</div><div class="gv" id="g-kcal">2500 kcal</div></div>
+          <div class="goal-controls"><div class="ctrl-btn" data-goal="kcal" data-step="-100"><span class="ms">remove</span></div><div class="goal-input" id="gi-kcal">2500</div><div class="ctrl-btn" data-goal="kcal" data-step="100">+</div></div></div>
+        <div class="goal-row"><div><div class="gl">Proteína</div><div class="gv" id="g-p">90 g</div></div>
+          <div class="goal-controls"><div class="ctrl-btn" data-goal="p" data-step="-5"><span class="ms">remove</span></div><div class="goal-input" id="gi-p">90</div><div class="ctrl-btn" data-goal="p" data-step="5">+</div></div></div>
+        <div class="goal-row"><div><div class="gl">Carboidrato</div><div class="gv" id="g-c">250 g</div></div>
+          <div class="goal-controls"><div class="ctrl-btn" data-goal="c" data-step="-10"><span class="ms">remove</span></div><div class="goal-input" id="gi-c">250</div><div class="ctrl-btn" data-goal="c" data-step="10">+</div></div></div>
+        <div class="goal-row"><div><div class="gl">Gordura</div><div class="gv" id="g-f">70 g</div></div>
+          <div class="goal-controls"><div class="ctrl-btn" data-goal="f" data-step="-5"><span class="ms">remove</span></div><div class="goal-input" id="gi-f">70</div><div class="ctrl-btn" data-goal="f" data-step="5">+</div></div></div>
+        <div class="goal-row"><div><div class="gl">Água</div><div class="gv" id="g-w">2000 ml</div></div>
+          <div class="goal-controls"><div class="ctrl-btn" data-goal="w" data-step="-100"><span class="ms">remove</span></div><div class="goal-input" id="gi-w">2000</div><div class="ctrl-btn" data-goal="w" data-step="100">+</div></div></div>
+      </div>
+
+      <div class="section-header mt">Água de hoje</div>
+      <div class="nb-card">
+        <div class="water-top"><span class="w-label">Consumido</span><span class="w-value" id="prof-water-label">1.200 / 2.000 ml</span></div>
+        <div class="track"><div class="fill fill-water" id="prof-water-fill" style="width:60%"></div></div>
+        <div class="chips">
+          <div class="chip" data-water="250">+250 ml</div>
+          <div class="chip" data-water="500">+500 ml</div>
+          <div class="chip" data-water="reset" style="background:var(--elevated)">Zerar</div>
+        </div>
+      </div>
+
+      <div class="section-header mt">Integração com a IA</div>
+      <div class="nb-card">
+        <div class="stat-label">Gemini API Key</div>
+        <div class="i-status">Não configurada — análise automática indisponível</div>
+        <input type="text" placeholder="Cole sua chave aqui" style="width:100%;padding:12px;border:2px solid var(--ink);border-radius:4px;font-family:var(--font-inter);font-weight:700;font-size:13px">
+        <button class="btn-secondary" style="margin-top:12px">Salvar chave</button>
+      </div>
+
+      <button class="btn-primary" data-go="home">Salvar perfil e metas</button>
+    </div>
+  </section>
+
+  <!-- ============ Tab bar global ============ -->
+  <nav class="tab-bar" id="tabbar">
+    <div class="tab" data-go="home"><span class="tl">Início</span><span class="tu"></span></div>
+    <div class="tab" data-go="diary"><span class="tl">Diário</span><span class="tu"></span></div>
+    <div class="tab" data-go="progress"><span class="tl">Progresso</span><span class="tu"></span></div>
+    <div class="tab" data-go="profile"><span class="tl">Perfil</span><span class="tu"></span></div>
+  </nav>
+
+</div>
+
+<p class="proto-note">Protótipo navegável Nutrivision · clique nos botões, chips e abas</p>
+
+<script>
+/* ============ Roteador ============ */
+const MAIN = ['home','diary','progress','profile'];
+const VALID = ['login','onboarding','home','scan','result','analysis','diary','progress','profile'];
+
+function go(name, push=true){
+  if(!VALID.includes(name)) name = 'home';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+
+  const tb = document.getElementById('tabbar');
+  tb.classList.toggle('show', MAIN.includes(name));
+  tb.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.go===name));
+
+  document.getElementById('phone').scrollIntoView({block:'start'});
+  if(push && location.hash !== '#'+name) history.pushState({name}, '', '#'+name);
+  if(name==='scan') resetScan();
+}
+
+window.addEventListener('popstate', e=>{
+  const n = (e.state && e.state.name) || location.hash.replace('#','') || 'login';
+  go(n, false);
+});
+
+/* ============ Delegação de cliques ============ */
+document.addEventListener('click', e=>{
+  const g = e.target.closest('[data-go]');
+  if(g){ go(g.dataset.go); return; }
+
+  const water = e.target.closest('[data-water]');
+  if(water){ handleWater(water.dataset.water); return; }
+
+  const unpin = e.target.closest('[data-unpin]');
+  if(unpin){ unpin.closest('.pinned-card').remove(); return; }
+
+  const add = e.target.closest('[data-add]');
+  if(add){ add.classList.toggle('on'); add.textContent = add.classList.contains('on') ? 'Adicionado <span class="ms">check</span>' : '+ Adicionar'; return; }
+
+  const pin = e.target.closest('[data-pin]');
+  if(pin){ pin.classList.toggle('on'); pin.textContent = pin.classList.contains('on') ? '<span class="ms">check</span>' : '<span class="ms fill">push_pin</span>'; return; }
+
+  const del = e.target.closest('[data-del]');
+  if(del){
+    const card = del.closest('.nb-card');
+    if(confirm('Excluir refeição? A foto também será apagada.')) card.remove();
+    return;
+  }
+
+  const gbtn = e.target.closest('[data-goal]');
+  if(gbtn){ adjustGoal(gbtn.dataset.goal, parseFloat(gbtn.dataset.step)); return; }
+
+  const chip = e.target.closest('.chip');
+  if(chip){
+    const grp = chip.closest('[data-group]');
+    if(grp){ grp.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); chip.classList.add('on'); }
+    else chip.classList.toggle('on');
+    return;
+  }
+
+  const radio = e.target.closest('.radio-opt');
+  if(radio){
+    radio.closest('.radio-group').querySelectorAll('.radio-opt').forEach(r=>r.classList.remove('on'));
+    radio.classList.add('on'); return;
+  }
+});
+
+/* ============ Água ============ */
+let waterMl = 1200;
+const WATER_GOAL = 2000;
+function renderWater(){
+  const pct = Math.min(100, Math.round(waterMl/WATER_GOAL*100));
+  const label = waterMl>=1000 ? (waterMl/1000).toFixed(1).replace('.',',')+' L' : waterMl+' ml';
+  const gl = WATER_GOAL>=1000 ? (WATER_GOAL/1000).toFixed(1).replace('.',',')+' L' : WATER_GOAL+' ml';
+  document.getElementById('home-water-label').textContent = label+' / '+gl;
+  document.getElementById('home-water-fill').style.width = pct+'%';
+  document.getElementById('prof-water-label').textContent = waterMl+' / '+WATER_GOAL+' ml';
+  document.getElementById('prof-water-fill').style.width = pct+'%';
+}
+function handleWater(v){
+  if(v==='reset') waterMl = 0;
+  else waterMl = Math.max(0, waterMl + parseInt(v,10));
+  renderWater();
+}
+
+/* ============ Metas (Perfil) ============ */
+const goals = { kcal:{v:2500,u:'kcal'}, p:{v:90,u:'g'}, c:{v:250,u:'g'}, f:{v:70,u:'g'}, w:{v:2000,u:'ml'} };
+function adjustGoal(key, step){
+  const g = goals[key]; g.v = Math.max(0, g.v + step);
+  document.getElementById('gi-'+key).textContent = g.v;
+  document.getElementById('g-'+key).textContent = g.v + (g.u==='kcal' ? ' kcal' : ' '+g.u);
+}
+
+/* ============ Onboarding ============ */
+let obStep = 1;
+function obRender(){
+  const texts = [
+    'Passo 1 de 4 • Dados pessoais',
+    'Passo 2 de 4 • Objetivo e atividade',
+    'Passo 3 de 4 • Restrições e saúde',
+    'Passo 4 de 4 • Resumo e confirmação'
+  ];
+  document.getElementById('ob-indicator').textContent = texts[obStep-1];
+  document.querySelectorAll('#ob-dots .dot').forEach(d=>d.classList.toggle('on', +d.dataset.dot <= obStep));
+  document.querySelectorAll('[data-step]').forEach(s=>s.classList.toggle('on', +s.dataset.step === obStep));
+  document.getElementById('ob-prev').style.display = obStep>1 ? 'block' : 'none';
+  const next = document.getElementById('ob-next');
+  next.textContent = obStep===4 ? 'Confirmar' : 'Próximo';
+  if(obStep===4) obSummary();
+}
+function obNext(){
+  if(obStep<4){ obStep++; obRender(); }
+  else { go('home'); }
+}
+function obPrev(){ if(obStep>1){ obStep--; obRender(); } }
+function obBMI(){
+  const h = parseFloat(document.getElementById('ob-height').value);
+  const w = parseFloat(document.getElementById('ob-weight').value);
+  const bv = document.getElementById('ob-bmi'), bc = document.getElementById('ob-bmi-class');
+  if(h && w){
+    const bmi = w/Math.pow(h/100,2);
+    bv.textContent = bmi.toFixed(1).replace('.',',');
+    if(bmi<18.5){ bc.textContent='Abaixo do peso'; bv.style.color='#B45309'; }
+    else if(bmi<25){ bc.textContent='Peso normal'; bv.style.color='#0E7A45'; }
+    else if(bmi<30){ bc.textContent='Sobrepeso'; bv.style.color='#B45309'; }
+    else { bc.textContent='Obesidade'; bv.style.color='#C2321D'; }
+  } else { bv.textContent='--'; bc.textContent='Insira altura e peso'; }
+}
+function selText(group){
+  const el = document.querySelector('#'+group+' .radio-opt.on');
+  return el ? el.dataset.v : '-';
+}
+function selChips(id){
+  return Array.from(document.querySelectorAll('#'+id+' .chip.on')).map(c=>c.textContent.trim());
+}
+function obSummary(){
+  const gender = document.getElementById('ob-gender');
+  document.getElementById('sum-name').textContent = document.getElementById('ob-name').value || '-';
+  document.getElementById('sum-age').textContent = document.getElementById('ob-age').value + ' anos • ' + gender.options[gender.selectedIndex].text;
+  document.getElementById('sum-hw').textContent = document.getElementById('ob-height').value + ' cm • ' + document.getElementById('ob-weight').value + ' kg';
+  document.getElementById('sum-bmi').textContent = document.getElementById('ob-bmi').textContent + ' (' + document.getElementById('ob-bmi-class').textContent + ')';
+  document.getElementById('sum-goal').textContent = selText('ob-goal');
+  document.getElementById('sum-act').textContent = selText('ob-activity');
+  const intol = selChips('ob-intol'), cond = selChips('ob-cond');
+  document.getElementById('sum-intol').textContent = intol.length ? intol.join(', ') : 'Nenhuma';
+  document.getElementById('sum-cond').textContent = cond.length ? cond.join(', ') : 'Nenhuma';
+}
+
+/* ============ Scan ============ */
+function scanStart(){
+  document.getElementById('scan-default').style.display = 'none';
+  document.getElementById('scan-loading').style.display = 'block';
+  const sub = document.getElementById('scan-sub');
+  sub.textContent = 'Consultando o Gemini';
+  setTimeout(()=>{ sub.textContent = 'Estimando macros...'; }, 1000);
+  setTimeout(()=>{ go('result'); }, 2200);
+}
+function resetScan(){
+  document.getElementById('scan-default').style.display = 'block';
+  document.getElementById('scan-loading').style.display = 'none';
+}
+
+/* ============ Result: espelha campos no topo ============ */
+const resMap = { 'f-kcal':'res-kcal', 'f-p':'res-p', 'f-c':'res-c', 'f-g':'res-g' };
+Object.keys(resMap).forEach(id=>{
+  const inp = document.getElementById(id), out = document.getElementById(resMap[id]);
+  inp.addEventListener('input', ()=>{
+    out.textContent = (/g$/.test(id) ? (inp.value||0)+'g' : (inp.value||0));
+  });
+});
+document.getElementById('btn-pin').addEventListener('click', function(){
+  this.classList.toggle('on');
+  this.textContent = this.classList.contains('on') ? 'Prato fixado <span class="ms">check</span>' : 'Fixar prato <span class="ms fill">push_pin</span>';
+});
+
+/* ============ bind específicos ============ */
+document.getElementById('ob-next').addEventListener('click', obNext);
+document.getElementById('ob-prev').addEventListener('click', obPrev);
+
+/* ============ Init ============ */
+const start = location.hash.replace('#','') || 'login';
+go(VALID.includes(start) ? start : 'login', false);
+renderWater();
+obBMI();
+obRender();
+</script>
+</body>
+</html>
